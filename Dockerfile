@@ -1,7 +1,8 @@
 FROM ubuntu:24.04
-# Why Ubuntu? Debian Bullseye ছিল মূল বেস, কিন্তু Ubuntu 24.04 LTS বেশি stable,
-# বিগিনার ফ্রেন্ডলি, এবং long-term support পায়। এছাড়া Ubuntu-তে প্যাকেজ
-# availability বেশি এবং কমিউনিটি সাপোর্ট বেশি।
+# Why Ubuntu 24.04 LTS?
+# - stable, beginner-friendly, long-term support
+# - better package availability than Debian
+# - larger community support
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -25,11 +26,11 @@ RUN apt update && apt install -y \
     wine32 \
     firefox \
     python3 \
-    python3-pip && \
+    python3-pip \
+    python3-urllib3 && \
     apt clean && rm -rf /var/lib/apt/lists/*
-# Note: firefox-esr ছিল Debian-এর প্যাকেজ, Ubuntu-তে শুধু 'firefox' প্যাকেজ ব্যবহার করা
-# হয় যেটি স্বয়ংক্রিয়ভাবে latest stable Firefox দেয়।
-# Python3 যোগ করা হয়েছে Hermes AI Agent-এর জন্য।
+# Python3 + pip added for Hermes AI Agent
+# python3-urllib3 for HTTP requests without external dependencies
 
 # Set root password  
 RUN echo "root:root" | chpasswd
@@ -52,6 +53,7 @@ RUN adduser xrdp ssl-cert
 # ============================================================================
 # Hermes agent একেবারে বিল্ট-ইন হিসেবে যোগ করা হয়েছে।
 # ইউজারকে কোনো অতিরিক্ত সেটআপের প্রয়োজন নেই - শুধু 'hermes-agent' লিখলেই চলবে।
+# প্রথমবার চালালে API key সেটআপের জন্য wizard আসবে।
 # ============================================================================
 
 COPY hermes-agent /usr/local/bin/hermes-agent
@@ -83,6 +85,24 @@ RUN mkdir -p /usr/share/icons/hicolor/48x48/apps && \
   <circle cx="24" cy="24" r="20" fill="url(#grad)"/>
   <text x="24" y="30" font-family="Arial" font-size="20" fill="white" text-anchor="middle">H</text>
 </svg>' > /usr/share/icons/hicolor/48x48/apps/hermes.png
+
+# Create welcome message that shows on first login
+RUN echo '#!/bin/bash
+echo ""
+echo "╔═══════════════════════════════════════════════════════════╗"
+echo "║                                                           ║"
+echo "║   🎤 Welcome to Ubuntu XRDP Desktop with Hermes AI        ║"
+echo "║                                                           ║"
+echo "║   Launch Hermes AI Agent:                                 ║"
+echo "║   • Type: hermes-agent                                    ║"
+echo "║   • Or click Hermes icon in Applications menu             ║"
+echo "║                                                           ║"
+echo "║   First time? Hermes will guide you to set up API key     ║"
+echo "║   for full AI capabilities (optional).                    ║"
+echo "║                                                           ║"
+echo "╚═══════════════════════════════════════════════════════════╝"
+echo ""
+' > /etc/profile.d/welcome.sh && chmod +x /etc/profile.d/welcome.sh
 
 COPY start.sh /start.sh
 RUN chmod +x /start.sh

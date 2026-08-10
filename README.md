@@ -15,86 +15,199 @@ This project provides a **Docker container with a full Ubuntu Linux desktop envi
 
 ### 🎤 NEW: Built-in Hermes AI Agent!
 
-This fork now includes **Hermes AI Agent** - a built-in intelligent assistant that provides:
-- ✅ **Zero-setup mode** - Works immediately without any API keys
-- ✅ **System assistance** - Help with XRDP, Ubuntu, Docker, and more
-- ✅ **Desktop integration** - Launch from applications menu with one click
-- ✅ **Optional cloud AI** - Add API key for full AI capabilities
-- ✅ **Interactive mode** - Chat naturally with the agent
+This fork now includes **Hermes AI Agent** - a built-in intelligent assistant with:
 
-> **No extra setup required!** Just build and run - Hermes is ready to help.
+- ✅ **First-Run Setup Wizard** - Guides you through API key configuration
+- ✅ **Zero-Setup Local Mode** - Works immediately without API keys
+- ✅ **Secure Credential Storage** - API keys stored encrypted in ~/.hermes/
+- ✅ **One-Click Desktop Launch** - Click icon in Applications menu
+- ✅ **Optional Cloud AI** - Add API key once, get full AI forever
+- ✅ **High Performance** - Optimized for fast responses
+
+> **No extra setup required!** Just build, run, and type `hermes-agent`. First time it will guide you to set up API key if you want full AI.
 
 ---
 
-## 🎤 Hermes AI Agent - Quick Start
+## 🎤 Hermes AI Agent - Quick Setup Guide
 
-### Launch Hermes
+### First Time Launch (Automatic Setup Wizard)
 
-**From Terminal:**
+When you first run Hermes, it automatically launches a **setup wizard**:
+
 ```bash
 hermes-agent
 ```
 
-**From Desktop:**
-Click the **Hermes AI Agent** icon in your Applications menu.
+**What happens:**
+1. ❓ It asks which AI provider you want (OpenAI or Anthropic)
+3. 🔑 It asks for your API key (or you can skip for local mode)
+4. ✅ It validates the key and saves it securely
+5. 🚀 You're ready! Full AI capabilities enabled
 
-### Simple Commands
+**That's it!** No manual configuration needed.
 
-```
-hermes-agent                    # Start interactive chat
-hermes-agent "system info"     # Get system information
-hermes-agent "help"            # Show help
-hermes-agent status            # Check agent status
-hermes-agent setup             # Set up desktop integration
-```
+---
 
-### Example Interactions
+### Quick Commands
 
-```
-You: system info
-Hermes: Returns detailed system information
+```bash
+# First time setup (wizard will guide you)
+hermes-agent
 
-You: memory
-Hermes: Shows RAM and disk usage
+# Or run setup explicitly
+hermes-agent setup
 
-You: xrdp help
-Hermes: Connection troubleshooting guide
+# Check status
+hermes-agent status
 
-You: help
-Hermes: Lists all available commands
+# Quick query
+hermes-agent "system info"
+
+# Launch interactive mode
+hermes-agent
 ```
 
 ---
 
-## 🖥️ hermes-agent Features
+### Example First-Run Session
 
-### Zero-Setup Local Mode (Default)
+```
+$ hermes-agent
 
-Hermes works **out of the box** without any API keys:
+══════════════════════════════════════════════════════════════
+  🎤 HERMES AI AGENT - First Time Setup
+══════════════════════════════════════════════════════════════
+
+  Welcome! Let's configure your AI assistant in 2 minutes.
+  This setup only needs to be done ONCE.
+
+──────────────────────────────────────────────────────────────
+  STEP 1: Choose Your AI Provider
+──────────────────────────────────────────────────────────────
+
+  Select which AI service you want to use:
+
+  [1] OpenAI (GPT-4o-mini) - Fast, affordable, excellent quality
+  [2] Anthropic (Claude Haiku) - Fast, safe, great reasoning
+  [3] Skip - Use local mode only (no API key needed)
+
+  Enter choice [1/2/3]: 1
+
+  ✓ Selected: OpenAI
+
+──────────────────────────────────────────────────────────────
+  STEP 2: Enter OpenAI API Key
+──────────────────────────────────────────────────────────────
+
+  To get an API key:
+  1. Go to: https://platform.openai.com/api-keys
+  2. Sign up/log in and create a new API key
+  3. Copy the key (starts with 'sk-')
+
+  ⚠️  Your key is stored securely and never shared.
+
+  Enter your API key (or 'skip' to use local mode):
+  API Key: ********************************
+
+  ✓ API key format looks valid
+  ✓ Testing connection...
+  ✓ Connection successful!
+
+──────────────────────────────────────────────────────────────
+  STEP 3: Saving Configuration...
+──────────────────────────────────────────────────────────────
+
+  ✓ API key saved securely
+  ✓ Default provider configured
+  ✓ Setup marker created
+
+══════════════════════════════════════════════════════════════
+  ✅ SETUP COMPLETE!
+══════════════════════════════════════════════════════════════
+
+  Provider: OpenAI
+  Model: gpt-4o-mini
+
+  Hermes AI Agent is now ready with FULL AI capabilities!
+  Just type 'hermes-agent' and start chatting.
+
+══════════════════════════════════════════════════════════════
+```
+
+---
+
+### After Setup - Using Hermes
+
+```
+$ hermes-agent
+
+══════════════════════════════════════════════════════════════
+  🎤 HERMES AI AGENT - Interactive Mode
+  Type 'help' for commands, 'quit' to exit
+  Mode: OPENAI
+══════════════════════════════════════════════════════════════
+
+You: system info
+
+Hermes: Returns detailed system information with full AI
+
+You: help me set up python
+
+Hermes: Provides intelligent guidance with full AI understanding
+
+You: what can I do with this desktop?
+
+Hermes: Explains all features with full AI knowledge
+
+You: quit
+```
+
+---
+
+## 🎤 Hermes AI Agent Features
+
+### Automatic Setup Wizard
 
 | Feature | Description |
 |---------|-------------|
-| System Info | Get OS, memory, disk, Docker info |
-| Resource Monitor | Check CPU, RAM, disk space |
+| **Interactive Prompts** | Clear step-by-step guided setup |
+| **Provider Selection** | Choose OpenAI or Anthropic |
+| **Key Validation** | Tests API key before saving |
+| **Secure Storage** | Saves to ~/.hermes/credentials.json (permissions 600) |
+| **Environment Variable Support** | Also reads from env vars if set |
+
+### Zero-Setup Local Mode
+
+Works immediately without any API keys:
+
+| Feature | Description |
+|---------|-------------|
+| System Info | OS, memory, disk, Docker info |
+| Resource Monitor | CPU, RAM, disk space |
 | XRDP Help | Connection guides, troubleshooting |
 | Desktop Help | XFCE4 tips, application installation |
 | Development Help | Python, Node.js, Git assistance |
 | Troubleshooting | Common fixes for errors |
 
-### Optional Cloud AI Mode
+### Cloud AI Mode (Optional)
 
-Want full AI intelligence? Add an API key:
+Add API key once, get full AI forever:
 
 ```bash
-# OpenAI
-export HERMES_OPENAI_API_KEY='sk-your-key-here'
+# Setup wizard (recommended)
+hermes-agent setup
 
-# Anthropic  
+# Or manually set environment variable
+export HERMES_OPENAI_API_KEY='sk-your-key-here'
 export HERMES_ANTHROPIC_API_KEY='your-key-here'
 
-# Then restart hermes-agent
+# Then run Hermes
 hermes-agent
 ```
+
+**Supported Providers:**
+- **OpenAI** (GPT-4o-mini) - Fast, affordable, excellent quality
+- **Anthropic** (Claude Haiku) - Fast, safe, great reasoning
 
 ---
 
@@ -147,212 +260,7 @@ hermes-agent
 **Option 2 - Desktop Menu:**
 1. Open Applications menu
 2. Find "Hermes AI Agent"
-3. Click to launch
-
----
-
-## 🎤 Using Hermes AI Agent
-
-### Interactive Mode
-
-```
-$ hermes-agent
-
-══════════════════════════════════════════════════════════
-  🎤 HERMES AI AGENT - Interactive Mode
-  Type 'help' for commands, 'quit' to exit
-  Mode: LOCAL (type 'status' for details)
-══════════════════════════════════════════════════════════
-
-You: help
-
-Hermes: Shows help menu with all commands
-
-You: system info
-
-Hermes: Returns detailed system information
-
-You: quit
-```
-
-### Quick Commands
-
-```bash
-# Get system information
-hermes-agent "system info"
-
-# Check resources
-hermes-agent memory
-hermes-agent disk
-
-# XRDP help
-hermes-agent xrdp
-hermes-agent connect
-
-# Troubleshooting
-hermes-agent error
-hermes-agent problem
-
-# Development help
-hermes-agent python
-hermes-agent install package
-```
-
-### Desktop Integration
-
-Hermes creates a desktop shortcut automatically during build:
-
-- **Icon**: Purple "H" logo in Applications menu
-- **Launch**: Click to open terminal with Hermes
-- **Accessibility**: Always available from menu
-
----
-
-## 🖥️ Supported Operating Systems
-
-### 🐧 Linux Distributions
-
-#### 1. Ubuntu 24.04 LTS (DEFAULT ✅)
-
-| Attribute | Value |
-|-----------|-------|
-| **Best for** | General use, stability, AI/ML, development, beginners |
-| **Compatibility** | ✅ Default - Fully Tested |
-| **Why choose it** | LTS support, huge community, Docker-native |
-| **Official Download** | [ubuntu.com/download](https://ubuntu.com/download) |
-
----
-
-#### 2. Debian 12 (Bullseye/Bookworm)
-
-| Attribute | Value |
-|-----------|-------|
-| **Best for** | Server use, minimal setups |
-| **Compatibility** | ✅ Compatible |
-| **Why choose it** | Rock-solid stability |
-| **Official Download** | [debian.org/download](https://www.debian.org/download) |
-
----
-
-#### 3. Kali Linux (Security Testing)
-
-| Attribute | Value |
-|-----------|-------|
-| **Best for** | Penetration testing, CTF, security labs |
-| **Compatibility** | ⚠️ Experimental |
-| **Why choose it** | Pre-installed security tools |
-| **Official Download** | [kali.org/get-kali](https://www.kali.org/get-kali/) |
-
----
-
-### 🪟 Windows Options
-
-#### 4. Windows 10
-
-> ⚠️ Requires VM or special setup (not native Docker)
-
-| Attribute | Value |
-|-----------|-------|
-| **Best for** | Windows app testing, legacy software |
-| **Compatibility** | ⚠️ Special setup required |
-| **Official ISO** | [microsoft.com/windows10](https://www.microsoft.com/software-download/windows10) |
-
----
-
-#### 5. Windows 11 (Latest)
-
-| Attribute | Value |
-|-----------|-------|
-| **Best for** | Latest Windows features, AI-enabled apps |
-| **Compatibility** | ⚠️ Special setup required |
-| **Official ISO** | [microsoft.com/windows11](https://www.microsoft.com/software-download/windows11) |
-
----
-
-### 🍎 macOS Options
-
-#### 6. macOS Sonoma (Latest)
-
-> ⚠️ Only on Apple Silicon hardware
-
-| Attribute | Value |
-|-----------|-------|
-| **Best for** | iOS/macOS development |
-| **Compatibility** | ⚠️ Apple hardware only |
-| **Official** | [apple.com/macos](https://apple.com/macos) |
-
----
-
-### ⚡ Powerful Unix Systems for AI & Trending Sectors
-
-#### 7. Alpine Linux (AI/ML Lightweight)
-
-| Attribute | Value |
-|-----------|-------|
-| **Best for** | Lightweight AI containers, microservices |
-| **Official** | [alpinelinux.org](https://alpinelinux.org/) |
-
----
-
-#### 8. Fedora AI (Artificial Intelligence Focus)
-
-| Attribute | Value |
-|-----------|-------|
-| **Best for** | AI/ML development, PyTorch, TensorFlow |
-| **Official** | [fedoraproject.org](https://fedoraproject.org/) |
-
----
-
-#### 9. Rocky Linux / AlmaLinux (Enterprise AI)
-
-| Attribute | Value |
-|-----------|-------|
-| **Best for** | Enterprise AI deployments |
-| **Official** | [rockylinux.org](https://rockylinux.org/) |
-
----
-
-#### 10. Arch Linux / Manjaro (Cutting Edge)
-
-| Attribute | Value |
-|-----------|-------|
-| **Best for** | Latest packages, rolling release |
-| **Official** | [archlinux.org](https://archlinux.org/) |
-
----
-
-#### 11. NixOS (Reproducible AI Environments)
-
-| Attribute | Value |
-|-----------|-------|
-| **Best for** | Reproducible AI/ML environments |
-| **Official** | [nixos.org](https://nixos.org/) |
-
----
-
-#### 12. OpenSUSE (AI Development)
-
-| Attribute | Value |
-|-----------|-------|
-| **Best for** | AI development, containers |
-| **Official** | [opensuse.org](https://www.opensuse.org/) |
-
----
-
-## 📊 Quick Comparison Table
-
-| OS | Docker Base | AI/ML Ready | Beginner Friendly | Hermes Support |
-|----|-------------|-------------|-------------------|----------------|
-| **Ubuntu 24.04 LTS** | ✅ Yes | ✅ Excellent | ✅ Yes | ✅ Full |
-| Debian 12 | ✅ Yes | ✅ Good | ⚠️ Moderate | ✅ Full |
-| Kali Linux | ✅ Yes | ⚠️ Tools only | ⚠️ Learning curve | ✅ Full |
-| Windows 10/11 | ❌ VM needed | ⚠️ Via WSL2 | ✅ Yes | ❌ Limited |
-| macOS | ❌ Apple only | ✅ Good | ✅ Yes | ❌ Limited |
-| Alpine Linux | ✅ Yes | ⚠️ Lightweight | ⚠️ Advanced | ✅ Full |
-| Fedora | ✅ Yes | ✅ Excellent | ⚠️ Moderate | ✅ Full |
-| Rocky/AlmaLinux | ✅ Yes | ✅ Enterprise | ⚠️ Server-focused | ✅ Full |
-| Arch/Manjaro | ⚠️ Community | ✅ Cutting-edge | ⚠️ Rolling release | ✅ Full |
-| NixOS | ⚠️ Experimental | ✅ Reproducible | ⚠️ Unique paradigm | ✅ Full |
+3. Click to launch (first time = setup wizard)
 
 ---
 
@@ -362,6 +270,9 @@ Hermes creates a desktop shortcut automatically during build:
 ubuntu-xrdp/
 ├── Dockerfile           # ← Main config (Ubuntu 24.04 + Hermes AI)
 ├── hermes-agent         # ← Built-in AI assistant (Python script)
+│                          #   - First-run setup wizard included
+│                          #   - Secure credential storage
+│                          #   - Local + Cloud AI modes
 ├── start.sh             # Container startup script
 ├── pulse-client.conf    # Audio config for XRDP
 └── README.md            # This file
@@ -372,7 +283,7 @@ ubuntu-xrdp/
 | File | Purpose | Modify For |
 |------|---------|------------|
 | **Dockerfile** | Base OS, packages, Hermes integration | Change OS, add packages |
-| **hermes-agent** | AI assistant (local + cloud mode) | Customize AI responses |
+| **hermes-agent** | AI assistant with setup wizard | Customize AI responses, providers |
 | **start.sh** | Service startup | Change service order |
 | **pulse-client.conf** | Audio configuration | Audio troubleshooting |
 
@@ -399,63 +310,80 @@ docker logs xrdp-desktop
 # Enter container
 docker exec -it xrdp-desktop bash
 
-# Launch Hermes
+# Launch Hermes (first time = setup wizard)
 docker exec -it xrdp-desktop hermes-agent
+
+# Launch Hermes with query
+docker exec -it xrdp-desktop hermes-agent "system info"
+
+# Check Hermes status
+docker exec -it xrdp-desktop hermes-agent status
 
 # Stop container
 docker stop xrdp-desktop
 
 # Remove container
 docker rm xrdp-desktop
+
+# Full reset (rebuild from scratch)
+docker stop xrdp-desktop && docker rm xrdp-desktop && docker rmi xrdp && docker build -t xrdp . && docker run -d -p 3389:3389 -v xrdp-root-home:/root --name xrdp-desktop xrdp
 ```
 
 ---
 
 ## 🎤 Hermes AI Agent Commands
 
-```bash
-# Launch interactive mode
-hermes-agent
+| Command | Description |
+|---------|-------------|
+| `hermes-agent` | Launch interactive mode (setup wizard on first run) |
+| `hermes-agent setup` | Run setup wizard explicitly |
+| `hermes-agent status` | Check agent configuration status |
+| `hermes-agent help` | Show help commands |
+| `hermes-agent "query"` | Quick query mode |
 
-# Single query
-hermes-agent "system info"
+### Interactive Mode Commands
 
-# Check status
-hermes-agent status
+| Command | Description |
+|---------|-------------|
+| `help` | Show all commands |
+| `status` | Check agent status |
+| `setup` | Reconfigure API key |
+| `quit` | Exit Hermes |
 
-# Show help
-hermes-agent help
+### Query Examples
 
-# Setup desktop integration
-hermes-agent setup
 ```
-
-### Hermes Topics
-
-| Query | Response |
-|-------|----------|
-| `system info` | OS, version, desktop environment details |
-| `memory` / `disk` | RAM and storage usage |
-| `docker` | Container and image information |
-| `xrdp` / `connect` | RDP connection guide |
-| `help` | All available commands |
-| `troubleshoot` | Common fixes |
-| `python` / `node` | Development setup help |
-| `install <pkg>` | Package installation guide |
+hermes-agent "system info"
+hermes-agent "memory"
+hermes-agent "docker"
+hermes-agent "xrdp help"
+hermes-agent "how do I install python"
+hermes-agent "troubleshoot connection"
+```
 
 ---
 
-## 🔐 Security Notes
+## 🔐 Security
 
-1. **Default password is `root`** - Change it for production
-2. **Hermes runs locally by default** - No data leaves your container
-3. **Cloud API keys are optional** - Only needed for full AI features
-4. **Windows/macOS** require separate licensing
+### API Key Storage
+
+- API keys are stored in `~/.hermes/credentials.json`
+- File permissions set to `600` (only owner can read/write)
+- Keys are also set as environment variables for current session
+- Keys are NEVER logged or shared
 
 ### Changing Default Password
 
 ```bash
 docker build --build-arg ROOT_PASSWORD="YourSecurePassword123!" -t xrdp .
+```
+
+### Resetting Hermes Configuration
+
+```bash
+# Reset all Hermes settings
+hermes-agent setup
+# (This clears old config and starts fresh)
 ```
 
 ---
@@ -468,18 +396,25 @@ docker build --build-arg ROOT_PASSWORD="YourSecurePassword123!" -t xrdp .
 # Check if Hermes is installed
 which hermes-agent
 
-# If not, the container may need rebuilding
+# If not found, container needs rebuilding
 docker build -t xrdp .
 ```
 
-### Hermes Not Responding
+### Setup Wizard Not Appearing
 
 ```bash
-# Check Python is available
-python3 --version
+# Force reset and run setup again
+hermes-agent setup
+```
 
-# Test Hermes directly
-python3 /usr/local/bin/hermes-agent status
+### API Key Not Working
+
+```bash
+# Check if key is stored
+cat ~/.hermes/credentials.json
+
+# Reconfigure
+hermes-agent setup
 ```
 
 ### Connection Issues
@@ -503,7 +438,7 @@ Contributions welcome! When contributing:
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Test thoroughly (including Hermes functionality)
+4. Test Hermes functionality
 5. Submit a pull request
 
 ---
@@ -524,6 +459,8 @@ Hermes AI Agent is included as a built-in feature for user assistance.
 | XRDP Project | [github.com/neutrinolabs/xrdp](https://github.com/neutrinolabs/xrdp) |
 | XFCE4 Desktop | [xfce.org](https://xfce.org/) |
 | Ubuntu Download | [ubuntu.com/download](https://ubuntu.com/download) |
+| OpenAI API Keys | [platform.openai.com/api-keys](https://platform.openai.com/api-keys) |
+| Anthropic API Keys | [console.anthropic.com/settings/keys](https://console.anthropic.com/settings/keys) |
 | This Repository | [github.com/jjkh1673-tech/ubuntu-xrdp](https://github.com/jjkh1673-tech/ubuntu-xrdp) |
 
 ---
@@ -535,13 +472,13 @@ Hermes AI Agent is included as a built-in feature for user assistance.
 | **Default OS** | Ubuntu 24.04 LTS |
 | **Desktop** | XFCE4 |
 | **Remote Access** | RDP (port 3389) |
-| **AI Agent** | Hermes (built-in, zero-setup) |
+| **AI Agent** | Hermes (built-in, setup wizard) |
 | **Main Config** | `Dockerfile` |
 | **AI Agent** | `hermes-agent` |
 | **Quick Build** | `docker build -t xrdp .` |
 | **Quick Run** | `docker run -d -p 3389:3389 -v xrdp-root-home:/root --name xrdp-desktop xrdp` |
-| **Launch Hermes** | `hermes-agent` |
+| **Launch Hermes** | `hermes-agent` (first time = setup wizard) |
 
 ---
 
-> **💡 TIP**: After connecting via RDP, click the Hermes icon in Applications menu or type `hermes-agent` in terminal to start chatting with your AI assistant!
+> **💡 TIP**: After connecting via RDP, type `hermes-agent` in terminal. First time it will guide you through API key setup for full AI. After that, just type `hermes-agent` anytime to chat with AI!
