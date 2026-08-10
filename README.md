@@ -1,11 +1,11 @@
-# Ubuntu XRDP Desktop in Docker
+# Ubuntu XRDP Desktop (built-in ai)
 
-> **Multi-Purpose Linux Environment Deployment with Remote Desktop + Built-in Hermes AI Agent**
+> **Multi-Purpose Linux Environment Deployment with Remote Desktop + Built-in Hermes AI Desktop**
 
 [![Docker](https://img.shields.io/badge/Docker-24.0+-blue.svg)](https://docker.com)
 [![Ubuntu](https://img.shields.io/badge/Default-Ubuntu_24.04_LTS-orange.svg)](https://ubuntu.com)
 [![XRDP](https://img.shields.io/badge/XRDP-0.9.x-green.svg)](https://github.com/neutrinolabs/xrdp)
-[![Hermes AI](https://img.shields.io/badge/Hermes-AI_Agent-purple.svg)](https://github.com/jjkh1673-tech/ubuntu-xrdp)
+[![Hermes AI](https://img.shields.io/badge/Hermes-AI_Desktop-purple.svg)](https://github.com/jjkh1673-tech/ubuntu-xrdp)
 
 ---
 
@@ -13,201 +13,162 @@
 
 This project provides a **Docker container with a full Ubuntu Linux desktop environment** that you can access remotely using Microsoft's Remote Desktop Protocol (RDP). Think of it as a virtual Ubuntu computer that runs inside Docker and can be accessed from Windows, macOS, or another Linux machine.
 
-### 🎤 NEW: Built-in Hermes AI Agent!
+### 🎤 NEW: Hermes AI Desktop (Built-in AI)
 
-This fork now includes **Hermes AI Agent** - a built-in intelligent assistant with:
+This fork now includes **Hermes AI Desktop** - a beautiful, Claude Desktop-like AI chat application built right in:
 
-- ✅ **First-Run Setup Wizard** - Guides you through API key configuration
-- ✅ **Zero-Setup Local Mode** - Works immediately without API keys
-- ✅ **Secure Credential Storage** - API keys stored encrypted in ~/.hermes/
-- ✅ **One-Click Desktop Launch** - Click icon in Applications menu
-- ✅ **Optional Cloud AI** - Add API key once, get full AI forever
-- ✅ **High Performance** - Optimized for fast responses
+- ✅ **Beautiful GUI** - Modern dark theme interface like Claude Desktop
+- ✅ **First-Run API Key Wizard** - Guides you step-by-step to set up
+- ✅ **Multiple AI Models** - Access to various models via gateway
+- ✅ **Chat Interface** - Real-time streaming chat with AI
+- ✅ **Tool Integration** - File operations (read, write, delete, list)
+- ✅ **Desktop Icon** - Launch from Applications menu
+- ✅ **Terminal Launch** - Type `hermes` in terminal
+- ✅ **Cross-Platform** - Works on any OS with limitations (see below)
 
-> **No extra setup required!** Just build, run, and type `hermes-agent`. First time it will guide you to set up API key if you want full AI.
+> **No extra setup required!** Just build, run, connect via RDP, and launch Hermes from the desktop icon or terminal.
 
 ---
 
-## 🎤 Hermes AI Agent - Quick Setup Guide
+## ⚠️ IMPORTANT: OS Compatibility
 
-### First Time Launch (Automatic Setup Wizard)
+| Operating System | Hermes AI Desktop Support | Notes |
+|------------------|---------------------------|-------|
+| **Ubuntu Linux (Default)** | ✅ Full Support | Primary target platform |
+| **Debian Linux** | ✅ Full Support | Compatible |
+| **Kali Linux** | ⚠️ Experimental | May need adjustments |
+| **Windows** | ❌ Not Supported | Cannot run Linux GUI apps directly. Use WSL2 or RDP into this container |
+| **macOS** | ⚠️ Limited | Cannot run directly. Use Docker with VNC or RDP client |
 
-When you first run Hermes, it automatically launches a **setup wizard**:
+### For Windows Users
 
+Since Windows cannot directly run Linux GUI applications, you have two options:
+
+1. **Use RDP to connect to this container** (recommended)
+   - Build and run this Docker container
+   - Connect via Windows Remote Desktop to `localhost:3389`
+   - Use Hermes AI Desktop inside the Linux desktop
+
+2. **Use WSL2** (Windows Subsystem for Linux)
+   - Install WSL2 with Ubuntu
+   - Install Docker in WSL2
+   - Build and run this container
+   - Access via RDP or VNC
+
+### For macOS Users
+
+- Use Docker Desktop for Mac
+- Build and run this container
+- Connect via Microsoft Remote Desktop app (from App Store)
+
+---
+
+## 🎤 Hermes AI Desktop - Quick Start
+
+### Launching Hermes AI Desktop
+
+**Option 1 - Desktop Icon (Recommended):**
+1. Connect via RDP to the desktop
+2. Open Applications menu
+3. Find and click **"Hermes AI Desktop"**
+4. First time = Setup wizard appears automatically
+
+**Option 2 - Terminal:**
 ```bash
-hermes-agent
+hermes
 ```
-
-**What happens:**
-1. ❓ It asks which AI provider you want (OpenAI or Anthropic)
-3. 🔑 It asks for your API key (or you can skip for local mode)
-4. ✅ It validates the key and saves it securely
-5. 🚀 You're ready! Full AI capabilities enabled
-
-**That's it!** No manual configuration needed.
-
----
-
-### Quick Commands
-
+Or:
 ```bash
-# First time setup (wizard will guide you)
-hermes-agent
-
-# Or run setup explicitly
-hermes-agent setup
-
-# Check status
-hermes-agent status
-
-# Quick query
-hermes-agent "system info"
-
-# Launch interactive mode
-hermes-agent
+python3 /opt/hermes-ai/main.py
 ```
 
----
+### First-Time Setup (API Key Configuration)
 
-### Example First-Run Session
-
-```
-$ hermes-agent
-
-══════════════════════════════════════════════════════════════
-  🎤 HERMES AI AGENT - First Time Setup
-══════════════════════════════════════════════════════════════
-
-  Welcome! Let's configure your AI assistant in 2 minutes.
-  This setup only needs to be done ONCE.
-
-──────────────────────────────────────────────────────────────
-  STEP 1: Choose Your AI Provider
-──────────────────────────────────────────────────────────────
-
-  Select which AI service you want to use:
-
-  [1] OpenAI (GPT-4o-mini) - Fast, affordable, excellent quality
-  [2] Anthropic (Claude Haiku) - Fast, safe, great reasoning
-  [3] Skip - Use local mode only (no API key needed)
-
-  Enter choice [1/2/3]: 1
-
-  ✓ Selected: OpenAI
-
-──────────────────────────────────────────────────────────────
-  STEP 2: Enter OpenAI API Key
-──────────────────────────────────────────────────────────────
-
-  To get an API key:
-  1. Go to: https://platform.openai.com/api-keys
-  2. Sign up/log in and create a new API key
-  3. Copy the key (starts with 'sk-')
-
-  ⚠️  Your key is stored securely and never shared.
-
-  Enter your API key (or 'skip' to use local mode):
-  API Key: ********************************
-
-  ✓ API key format looks valid
-  ✓ Testing connection...
-  ✓ Connection successful!
-
-──────────────────────────────────────────────────────────────
-  STEP 3: Saving Configuration...
-──────────────────────────────────────────────────────────────
-
-  ✓ API key saved securely
-  ✓ Default provider configured
-  ✓ Setup marker created
-
-══════════════════════════════════════════════════════════════
-  ✅ SETUP COMPLETE!
-══════════════════════════════════════════════════════════════
-
-  Provider: OpenAI
-  Model: gpt-4o-mini
-
-  Hermes AI Agent is now ready with FULL AI capabilities!
-  Just type 'hermes-agent' and start chatting.
-
-══════════════════════════════════════════════════════════════
-```
-
----
-
-### After Setup - Using Hermes
+When you first launch Hermes AI Desktop:
 
 ```
-$ hermes-agent
-
-══════════════════════════════════════════════════════════════
-  🎤 HERMES AI AGENT - Interactive Mode
-  Type 'help' for commands, 'quit' to exit
-  Mode: OPENAI
-══════════════════════════════════════════════════════════════
-
-You: system info
-
-Hermes: Returns detailed system information with full AI
-
-You: help me set up python
-
-Hermes: Provides intelligent guidance with full AI understanding
-
-You: what can I do with this desktop?
-
-Hermes: Explains all features with full AI knowledge
-
-You: quit
+╔═══════════════════════════════════════════════════════════╗
+║                                                           ║
+║   ✨ Welcome to Hermes AI Desktop                        ║
+║                                                           ║
+║   To get started, you need an API key:                    ║
+║                                                           ║
+║   🔑 Get your free API key from:                          ║
+║   https://freemodelsforall.hopto.org/                    ║
+║                                                           ║
+║   Steps:                                                  ║
+║   1. Visit the website above                              ║
+║   2. Sign up / Log in                                     ║
+║   3. Copy your API key                                    ║
+║   4. Paste it in the box below                            ║
+║                                                           ║
+║   ┌─────────────────────────────────────────────────┐     ║
+║   │ Paste your API key here...                      │     ║
+║   └─────────────────────────────────────────────────┘     ║
+║                                                           ║
+║   [🚀 Continue with API Key]                              ║
+║   [Skip - Use Local Mode Only]                            ║
+║                                                           ║
+╚═══════════════════════════════════════════════════════════╝
 ```
 
----
+**After entering API key:**
+- Validates the key automatically
+- Saves securely to `~/.hermes/credentials.json`
+- Fetches available models
+- Opens the chat interface
 
-## 🎤 Hermes AI Agent Features
+### Using Hermes AI Desktop
 
-### Automatic Setup Wizard
+#### Chat Interface
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  ✨ Hermes AI                      ⚙️ Settings    │
+├──────────────┬──────────────────────────────────────────────┤
+│  MODEL       │                                              │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │ Claude Opus 5 ▼                                │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                       │
+│  ➕ New Chat                                          │
+│                                                       │
+│  CHAT HISTORY                                         │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │ 💬 Chat                                         │   │
+│  │                                                 │   │
+│  │ You: Hello!                                     │   │
+│  │ ✨ Hello! How can I help you today?             │   │
+│  │                                                 │   │
+│  │ You: What models are available?                 │   │
+│  │ ✨ This gateway supports various models...      │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                       │
+│  ⚙️ Settings                                          │
+│  🔑 API: Configured (sk-abc...)                        │
+└──────────────┴──────────────────────────────────────────────┘
+```
+
+#### Features
 
 | Feature | Description |
 |---------|-------------|
-| **Interactive Prompts** | Clear step-by-step guided setup |
-| **Provider Selection** | Choose OpenAI or Anthropic |
-| **Key Validation** | Tests API key before saving |
-| **Secure Storage** | Saves to ~/.hermes/credentials.json (permissions 600) |
-| **Environment Variable Support** | Also reads from env vars if set |
+| **Model Selection** | Choose from available AI models via sidebar dropdown |
+| **Real-time Chat** | Streaming responses as AI generates text |
+| **Tool Integration** | AI can read/write files, list directories |
+| **Chat History** | Save and manage multiple conversations |
+| **Settings** | Configure API key, view model info |
+| **Dark Theme** | Beautiful modern dark UI |
 
-### Zero-Setup Local Mode
+#### Commands
 
-Works immediately without any API keys:
-
-| Feature | Description |
-|---------|-------------|
-| System Info | OS, memory, disk, Docker info |
-| Resource Monitor | CPU, RAM, disk space |
-| XRDP Help | Connection guides, troubleshooting |
-| Desktop Help | XFCE4 tips, application installation |
-| Development Help | Python, Node.js, Git assistance |
-| Troubleshooting | Common fixes for errors |
-
-### Cloud AI Mode (Optional)
-
-Add API key once, get full AI forever:
-
-```bash
-# Setup wizard (recommended)
-hermes-agent setup
-
-# Or manually set environment variable
-export HERMES_OPENAI_API_KEY='sk-your-key-here'
-export HERMES_ANTHROPIC_API_KEY='your-key-here'
-
-# Then run Hermes
-hermes-agent
-```
-
-**Supported Providers:**
-- **OpenAI** (GPT-4o-mini) - Fast, affordable, excellent quality
-- **Anthropic** (Claude Haiku) - Fast, safe, great reasoning
+| Action | How To |
+|--------|--------|
+| Start new chat | Click "➕ New Chat" button |
+| Send message | Type in input box + press Enter |
+| Change API key | Settings → Change API Key |
+| View model info | Settings panel |
+| Exit | Close window or use window controls |
 
 ---
 
@@ -232,7 +193,7 @@ cd ubuntu-xrdp
 docker build -t xrdp .
 ```
 
-> ⏱️ **Time**: First build takes 3-10 minutes depending on your internet speed.
+> ⏱️ **Time**: First build takes 5-15 minutes (includes Python GUI dependencies)
 
 ### Step 3: Run the Container
 
@@ -248,19 +209,24 @@ docker run -d -p 3389:3389 -v xrdp-root-home:/root --name xrdp-desktop xrdp
    - **Username**: `root`
    - **Password**: `root`
 
-### Step 5: Launch Hermes AI Agent
+### Step 5: Launch Hermes AI Desktop
 
-Once connected to the desktop:
+**From Desktop:**
+1. Open Applications menu
+2. Find **"Hermes AI Desktop"**
+3. Click to launch
 
-**Option 1 - Terminal:**
+**Or from Terminal:**
 ```bash
-hermes-agent
+hermes
 ```
 
-**Option 2 - Desktop Menu:**
-1. Open Applications menu
-2. Find "Hermes AI Agent"
-3. Click to launch (first time = setup wizard)
+**First Time:**
+- Welcome screen appears with API key setup
+- Visit https://freemodelsforall.hopto.org/ to get API key
+- Enter key in the input box
+- Click "Continue with API Key"
+- Chat interface opens ready to use!
 
 ---
 
@@ -268,22 +234,22 @@ hermes-agent
 
 ```
 ubuntu-xrdp/
-├── Dockerfile           # ← Main config (Ubuntu 24.04 + Hermes AI)
-├── hermes-agent         # ← Built-in AI assistant (Python script)
-│                          #   - First-run setup wizard included
-│                          #   - Secure credential storage
-│                          #   - Local + Cloud AI modes
-├── start.sh             # Container startup script
-├── pulse-client.conf    # Audio config for XRDP
-└── README.md            # This file
+├── Dockerfile              # ← Main config (Ubuntu 24.04 + Hermes AI Desktop)
+├── hermes-gui/
+│   ├── main.py            # ← Hermes AI Desktop application (GUI)
+│   └── requirements.txt   # ← Python dependencies
+├── start.sh               # Container startup script
+├── pulse-client.conf      # Audio config for XRDP
+└── README.md              # This file
 ```
 
 ### Which File Does What?
 
 | File | Purpose | Modify For |
 |------|---------|------------|
-| **Dockerfile** | Base OS, packages, Hermes integration | Change OS, add packages |
-| **hermes-agent** | AI assistant with setup wizard | Customize AI responses, providers |
+| **Dockerfile** | Base OS, packages, Hermes installation | Change OS, add packages |
+| **hermes-gui/main.py** | Hermes AI Desktop GUI application | Customize AI features, UI |
+| **hermes-gui/requirements.txt** | Python dependencies | Add/remove Python packages |
 | **start.sh** | Service startup | Change service order |
 | **pulse-client.conf** | Audio configuration | Audio troubleshooting |
 
@@ -294,9 +260,6 @@ ubuntu-xrdp/
 ```bash
 # Build the image
 docker build -t xrdp .
-
-# Build with custom password
-docker build --build-arg ROOT_PASSWORD="MySecurePass123" -t xrdp .
 
 # Run the container
 docker run -d -p 3389:3389 -v xrdp-root-home:/root --name xrdp-desktop xrdp
@@ -310,14 +273,11 @@ docker logs xrdp-desktop
 # Enter container
 docker exec -it xrdp-desktop bash
 
-# Launch Hermes (first time = setup wizard)
-docker exec -it xrdp-desktop hermes-agent
+# Launch Hermes from inside container
+docker exec -it xrdp-desktop hermes
 
-# Launch Hermes with query
-docker exec -it xrdp-desktop hermes-agent "system info"
-
-# Check Hermes status
-docker exec -it xrdp-desktop hermes-agent status
+# Launch Hermes with query (if supported)
+docker exec -it xrdp-desktop bash -c "echo 'your query' | python3 /opt/hermes-ai/main.py"
 
 # Stop container
 docker stop xrdp-desktop
@@ -331,59 +291,18 @@ docker stop xrdp-desktop && docker rm xrdp-desktop && docker rmi xrdp && docker 
 
 ---
 
-## 🎤 Hermes AI Agent Commands
-
-| Command | Description |
-|---------|-------------|
-| `hermes-agent` | Launch interactive mode (setup wizard on first run) |
-| `hermes-agent setup` | Run setup wizard explicitly |
-| `hermes-agent status` | Check agent configuration status |
-| `hermes-agent help` | Show help commands |
-| `hermes-agent "query"` | Quick query mode |
-
-### Interactive Mode Commands
-
-| Command | Description |
-|---------|-------------|
-| `help` | Show all commands |
-| `status` | Check agent status |
-| `setup` | Reconfigure API key |
-| `quit` | Exit Hermes |
-
-### Query Examples
-
-```
-hermes-agent "system info"
-hermes-agent "memory"
-hermes-agent "docker"
-hermes-agent "xrdp help"
-hermes-agent "how do I install python"
-hermes-agent "troubleshoot connection"
-```
-
----
-
 ## 🔐 Security
 
 ### API Key Storage
 
 - API keys are stored in `~/.hermes/credentials.json`
 - File permissions set to `600` (only owner can read/write)
-- Keys are also set as environment variables for current session
 - Keys are NEVER logged or shared
 
 ### Changing Default Password
 
 ```bash
 docker build --build-arg ROOT_PASSWORD="YourSecurePassword123!" -t xrdp .
-```
-
-### Resetting Hermes Configuration
-
-```bash
-# Reset all Hermes settings
-hermes-agent setup
-# (This clears old config and starts fresh)
 ```
 
 ---
@@ -394,27 +313,27 @@ hermes-agent setup
 
 ```bash
 # Check if Hermes is installed
-which hermes-agent
+which hermes
 
-# If not found, container needs rebuilding
-docker build -t xrdp .
+# If not found, check Python and dependencies
+python3 --version
+pip3 list | grep customtkinter
+
+# Reinstall if needed
+pip3 install customtkinter openai Pillow
 ```
 
-### Setup Wizard Not Appearing
+### Hermes GUI Not Opening
 
 ```bash
-# Force reset and run setup again
-hermes-agent setup
-```
+# Check if tkinter is available
+python3 -c "import tkinter; print('tkinter OK')"
 
-### API Key Not Working
+# Check for display issues
+echo $DISPLAY
 
-```bash
-# Check if key is stored
-cat ~/.hermes/credentials.json
-
-# Reconfigure
-hermes-agent setup
+# Try running directly
+python3 /opt/hermes-ai/main.py
 ```
 
 ### Connection Issues
@@ -429,6 +348,12 @@ hermes-agent setup
 2. Check session: `docker exec xrdp-desktop cat /root/.xsession`
 3. Restart container: `docker restart xrdp-desktop`
 
+### Hermes Shows "API Not Configured"
+
+- First time launch shows setup wizard
+- Enter API key from https://freemodelsforall.hopto.org/
+- Or configure manually: Settings → Change API Key
+
 ---
 
 ## 🤝 Contributing
@@ -438,7 +363,7 @@ Contributions welcome! When contributing:
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Test Hermes functionality
+4. Test Hermes functionality thoroughly
 5. Submit a pull request
 
 ---
@@ -447,7 +372,7 @@ Contributions welcome! When contributing:
 
 Based on [hopingboyz/debianxrdp](https://github.com/hopingboyz/debianxrdp)
 
-Hermes AI Agent is included as a built-in feature for user assistance.
+Hermes AI Desktop is included as a built-in feature for user assistance.
 
 ---
 
@@ -459,8 +384,7 @@ Hermes AI Agent is included as a built-in feature for user assistance.
 | XRDP Project | [github.com/neutrinolabs/xrdp](https://github.com/neutrinolabs/xrdp) |
 | XFCE4 Desktop | [xfce.org](https://xfce.org/) |
 | Ubuntu Download | [ubuntu.com/download](https://ubuntu.com/download) |
-| OpenAI API Keys | [platform.openai.com/api-keys](https://platform.openai.com/api-keys) |
-| Anthropic API Keys | [console.anthropic.com/settings/keys](https://console.anthropic.com/settings/keys) |
+| API Key Portal | [freemodelsforall.hopto.org](https://freemodelsforall.hopto.org/) |
 | This Repository | [github.com/jjkh1673-tech/ubuntu-xrdp](https://github.com/jjkh1673-tech/ubuntu-xrdp) |
 
 ---
@@ -472,13 +396,14 @@ Hermes AI Agent is included as a built-in feature for user assistance.
 | **Default OS** | Ubuntu 24.04 LTS |
 | **Desktop** | XFCE4 |
 | **Remote Access** | RDP (port 3389) |
-| **AI Agent** | Hermes (built-in, setup wizard) |
+| **AI Desktop** | Hermes AI Desktop (built-in GUI) |
+| **AI Gateway** | freemodelsforall.hopto.org |
 | **Main Config** | `Dockerfile` |
-| **AI Agent** | `hermes-agent` |
+| **AI Application** | `hermes-gui/main.py` |
 | **Quick Build** | `docker build -t xrdp .` |
 | **Quick Run** | `docker run -d -p 3389:3389 -v xrdp-root-home:/root --name xrdp-desktop xrdp` |
-| **Launch Hermes** | `hermes-agent` (first time = setup wizard) |
+| **Launch Hermes** | Click desktop icon OR type `hermes` in terminal |
 
 ---
 
-> **💡 TIP**: After connecting via RDP, type `hermes-agent` in terminal. First time it will guide you through API key setup for full AI. After that, just type `hermes-agent` anytime to chat with AI!
+> **💡 TIP**: After connecting via RDP, click the "Hermes AI Desktop" icon in Applications menu. First time it will guide you to get API key from https://freemodelsforall.hopto.org/ - just copy and paste, then you're ready to chat with AI!
