@@ -125,10 +125,10 @@ RUN mkdir -p /opt/hermes-ai && \
 COPY hermes-agent /opt/hermes-ai/main.py
 RUN chmod +x /opt/hermes-ai/main.py
 
-# Copy Hermes icons
-COPY hermes-ai/icons/hermes-icon-48x48.png /usr/share/icons/hicolor/48x48/apps/hermes-ai.png
-COPY hermes-ai/icons/hermes-icon-128x128.png /usr/share/icons/hicolor/128x128/apps/hermes-ai.png
-COPY hermes-ai/icons/hermes-icon-256x256.png /usr/share/icons/hicolor/256x256/apps/hermes-ai.png
+# Copy Hermes icons (REAL LOGO from online)
+COPY hermes-ai/icons/hermes-agent-48x48.png /usr/share/icons/hicolor/48x48/apps/hermes-ai.png
+COPY hermes-ai/icons/hermes-agent-128x128.png /usr/share/icons/hicolor/128x128/apps/hermes-ai.png
+COPY hermes-ai/icons/hermes-agent-256x256.png /usr/share/icons/hicolor/256x256/apps/hermes-ai.png
 RUN ln -sf /usr/share/icons/hicolor/256x256/apps/hermes-ai.png /usr/share/icons/hicolor/48x48/apps/hermes-ai.png
 
 # Create terminal launcher for Hermes AI
@@ -142,9 +142,9 @@ python3 /opt/hermes-ai/main.py
 
 COPY ai-canvas/main.py /opt/ai-canvas/main.py
 COPY ai-canvas/requirements.txt /opt/ai-canvas/requirements.txt
-COPY ai-canvas/icons/ai-canvas-icon-48x48.png /opt/ai-canvas/icons/ai-canvas-icon.png
-COPY ai-canvas/icons/ai-canvas-icon-128x128.png /usr/share/icons/hicolor/128x128/apps/ai-canvas.png
-COPY ai-canvas/icons/ai-canvas-icon-256x256.png /usr/share/icons/hicolor/256x256/apps/ai-canvas.png
+COPY ai-canvas/icons/ai-canvas-real-48x48.png /opt/ai-canvas/icons/ai-canvas-icon.png
+COPY ai-canvas/icons/ai-canvas-real-128x128.png /usr/share/icons/hicolor/128x128/apps/ai-canvas.png
+COPY ai-canvas/icons/ai-canvas-real-256x256.png /usr/share/icons/hicolor/256x256/apps/ai-canvas.png
 RUN ln -sf /usr/share/icons/hicolor/256x256/apps/ai-canvas.png /usr/share/icons/hicolor/48x48/apps/ai-canvas.png
 
 RUN chmod +x /opt/ai-canvas/main.py
