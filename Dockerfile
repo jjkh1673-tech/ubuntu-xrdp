@@ -6,6 +6,23 @@ FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+# ============================================================================
+# API KEY CONFIGURATION (Set during build/deploy time)
+# ============================================================================
+# Hermes AI Agent এর জন্য API কী ডিপ্লয় করার সময় ভ্যারিয়েবল হিসেবে দিন।
+# এই ভ্যারিয়েবলটি Hermes Agent দ্বারা ব্যবহার করা হবে।
+#
+# উদাহরণ:
+#   docker build --build-arg HERMES_API_KEY="আপনার-API-কী-এখানে" -t xrdp .
+#   অথবা
+#   docker run -e HERMES_API_KEY="আপনার-API-কী-এখানে" ...
+#
+# API কী কোথায় পাবেন: https://freemodelsforall.hopto.org/
+# ============================================================================
+
+ARG HERMES_API_KEY=""
+ENV HERMES_API_KEY=${HERMES_API_KEY}
+
 RUN dpkg --add-architecture i386
 
 RUN apt update && apt install -y \
@@ -63,6 +80,16 @@ RUN apt update && apt install -y \
 # Install Python dependencies
 RUN pip3 install --no-cache-dir customtkinter openai Pillow
 
+# If HERMES_API_KEY is provided during build, save it to credentials file
+RUN if [ -n "$HERMES_API_KEY" ]; then \
+        mkdir -p /root/.hermes && \
+        echo "{\"api_key\": \"$HERMES_API_KEY\", \"saved_at\": \"$(date -Iseconds)\", \"provider\": \"custom_gateway\"}" > /root/.hermes/credentials.json && \
+        chmod 600 /root/.hermes/credentials.json && \
+        echo "✅ Hermes API key pre-configured during build"; \
+    else \
+        echo "⚠️  No HERMES_API_KEY provided during build - Hermes will prompt on first run"; \
+    fi
+
 # Set root password  
 RUN echo "root:root" | chpasswd
 
@@ -92,7 +119,7 @@ RUN mkdir -p /opt/hermes-ai && \
     mkdir -p /usr/share/icons/hicolor/256x256/apps
 
 # ============================================================================
-# HERMES AI AGENT - Simple Terminal Agent
+# HERMES AI AGENT - Simple Terminal Agent with ICON
 # ============================================================================
 
 COPY hermes-agent /opt/hermes-ai/main.py
@@ -113,36 +140,50 @@ COPY ai-canvas/icons/icon.svg /opt/ai-canvas/icons/icon.svg
 
 RUN chmod +x /opt/ai-canvas/main.py
 
-# Create desktop shortcut for AI Canvas
+# Also support AI Canvas via HERMES_API_KEY environment variable
+RUN echo '#!/bin/bash
+# If HERMES_API_KEY is set in environment, use it
+if [ -n "$HERMES_API_KEY" ]; then
+    export API_KEY="$HERMES_API_KEY"
+    export OPENAI_API_KEY="$HERMES_API_KEY"
+fi
+python3 /opt/ai-canvas/main.py
+' > /usr/local/bin/ai-canvas && chmod +x /usr/local/bin/ai-canvas
+
+# ============================================================================
+# DESKTOP SHORTCUTS
+# ============================================================================
+
+# AI Canvas desktop shortcut
 RUN echo '[Desktop Entry]
 Name=AI Canvas
 Comment=Full-Featured AI Desktop Application - Chat, Tools, Multiple Models
-Exec=python3 /opt/ai-canvas/main.py
+Exec=ai-canvas
 Icon=ai-canvas
 Terminal=false
 Type=Application
 Categories=Utility;AI;Development;Graphics;
-Keywords=AI;assistant;chatbot;canvas;hermes;helper;tools;
+Keywords=AI;assistant;chatbot;canvas;tools;models;
 StartupNotify=true
 StartupWMClass=AI Canvas' > /usr/share/applications/ai-canvas.desktop
 
-# Create desktop shortcut for Hermes AI Agent
+# Hermes AI Agent desktop shortcut
 RUN echo '[Desktop Entry]
 Name=Hermes AI Agent
-Comment=Built-in Agent Setup & Basic Assistant - Ubuntu XRDP
+Comment=Built-in Agent - Setup & Basic Assistant - Terminal Mode
 Exec=hermes-agent
 Icon=hermes-ai
 Terminal=true
 Type=Application
 Categories=Utility;AI;Development;
-Keywords=AI;agent;setup;helper;
+Keywords=AI;agent;setup;helper;terminal;
 StartupNotify=true' > /usr/share/applications/hermes-agent.desktop
 
 # ============================================================================
 # ICONS
 # ============================================================================
 
-# Create AI Canvas icon (SVG for multiple sizes)
+# AI Canvas icon (blue theme)
 RUN echo '<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
   <defs>
@@ -159,7 +200,7 @@ RUN echo '<?xml version="1.0" encoding="UTF-8"?>
 </svg>' > /usr/share/icons/hicolor/256x256/apps/ai-canvas.svg && \
     ln -sf /usr/share/icons/hicolor/256x256/apps/ai-canvas.svg /usr/share/icons/hicolor/48x48/apps/ai-canvas.svg
 
-# Create Hermes AI icon
+# Hermes AI icon (purple theme)
 RUN echo '<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
   <defs>
@@ -188,16 +229,24 @@ echo "║                                                                ║"
 echo "║   ✨ Welcome to Ubuntu XRDP with AI Applications               ║"
 echo "║                                                                ║"
 echo "║   Available Applications:                                      ║"
-echo "║   • AI Canvas - Full AI Desktop (Applications menu)           ║"
-echo "║   • Hermes AI Agent - Simple Setup Agent (Applications menu)  ║"
+echo "║   • AI Canvas - Full AI Desktop GUI (Applications menu)       ║"
+echo "║   • Hermes AI Agent - Terminal Agent (Applications menu)      ║"
 echo "║                                                                ║"
 echo "║   Terminal Commands:                                           ║"
 echo "║   • ai-canvas     - Launch AI Canvas GUI                      ║"
 echo "║   • hermes-agent  - Launch Hermes terminal agent              ║"
 echo "║                                                                ║"
-echo "║   AI Canvas Setup:                                             ║"
-echo "║   First launch will guide you to get API key from:            ║"
-echo "║   https://freemodelsforall.hopto.org/                        ║"
+echo "║   ════════════════════════════════════════════════════════════ ║"
+echo "║                                                                ║"
+echo "║   API KEY INFORMATION:                                         ║"
+echo "║   Both applications use the same API key portal:              ║"
+echo "║   🔑 https://freemodelsforall.hopto.org/                     ║"
+echo "║                                                                ║"
+echo "║   • For Hermes AI Agent: Set HERMES_API_KEY during build      ║"
+echo "║     or run 'hermes-agent' and enter key on first launch       ║"
+echo "║                                                                ║"
+echo "║   • For AI Canvas: Click app icon, enter key on first launch  ║"
+echo "║     OR set HERMES_API_KEY when running container             ║"
 echo "║                                                                ║"
 echo "╚════════════════════════════════════════════════════════════════╝"
 echo ""

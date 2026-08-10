@@ -5,220 +5,218 @@
 [![Docker](https://img.shields.io/badge/Docker-24.0+-blue.svg)](https://docker.com)
 [![Ubuntu](https://img.shields.io/badge/Default-Ubuntu_24.04_LTS-orange.svg)](https://ubuntu.com)
 [![XRDP](https://img.shields.io/badge/XRDP-0.9.x-green.svg)](https://github.com/neutrinolabs/xrdp)
-[![AI Canvas](https://img.shields.io/badge/AI_Canvas-Full_GUI_App-purple.svg)](https://github.com/jjkh1673-tech/ubuntu-xrdp)
+[![AI Canvas](https://img.shields.io/badge/AI_Canvas-GUI_App-purple.svg)](https://github.com/jjkh1673-tech/ubuntu-xrdp)
 
 ---
 
 ## 🚀 What Is This Project?
 
-This project provides a **Docker container with a full Ubuntu Linux desktop environment** that you can access remotely using Microsoft's Remote Desktop Protocol (RDP). Think of it as a virtual Ubuntu computer that runs inside Docker and can be accessed from Windows, macOS, or another Linux machine.
+This project provides a **Docker container with a full Ubuntu Linux desktop environment** that you can access remotely using Microsoft's Remote Desktop Protocol (RDP). Inside this container, you get **TWO separate AI applications**:
 
-### 🎤 TWO AI APPLICATIONS INCLUDED
+1. **Hermes AI Agent** - Terminal-based agent with icon
+2. **AI Canvas** - Full GUI application with icon
 
-This fork includes **TWO separate AI applications**:
+---
+
+## 📌 IMPORTANT: API Key Setup
+
+Both applications use the **SAME API key portal**:
+
+### 🔑 API Key Portal (For BOTH Applications)
+
+**Get your API key from:** https://freemodelsforall.hopto.org/
+
+**Instructions:**
+1. Visit https://freemodelsforall.hopto.org/
+2. Sign up or log in
+3. Copy your API key
+4. Use this key for either application
 
 ---
 
 ## 📱 Application 1: Hermes AI Agent
 
-**Hermes AI Agent** is a **simple terminal-based agent** for:
-- Initial setup and API key configuration
-- System information queries
-- Basic troubleshooting help
-- Local mode (no API key needed)
+### Overview
 
-### Features
+**Hermes AI Agent** is a **terminal-based AI agent** with:
+- ✅ **Software Icon** - Visible in Applications menu
+- ✅ **Terminal Mode** - Runs in terminal
+- ✅ **API Key via Environment Variable** - Set during deployment
+- ✅ **First-Run Prompt** - Or pre-configured via build arg
 
-| Feature | Description |
-|---------|-------------|
-| **Simple Interface** | Terminal-based, easy to use |
-| **Setup Wizard** | Guides API key configuration |
-| **System Info** | Query OS, memory, docker info |
-| **Local Mode** | Works without API key for basic help |
-| **Quick Access** | Type `hermes-agent` in terminal |
+### How to Set API Key for Hermes
 
-### Usage
+**Method 1: Set During Build (Recommended)**
 
 ```bash
-# Launch Hermes AI Agent
+# Build with API key as build argument
+docker build \
+  --build-arg HERMES_API_KEY="আপনার-API-কী-এখানে" \
+  -t xrdp .
+```
+
+**Method 2: Set When Running Container**
+
+```bash
+# Run with environment variable
+docker run -d -p 3389:3389 \
+  -e HERMES_API_KEY="আপনার-API-কী-এখানে" \
+  -v xrdp-root-home:/root \
+  --name xrdp-desktop \
+  xrdp
+```
+
+**Method 3: First-Run Prompt (If key not set)**
+
+```bash
+# If no API key is set, Hermes will prompt on first run
+docker exec -it xrdp-desktop hermes-agent
+# Then enter API key when prompted
+```
+
+### How to Get API Key
+
+1. Visit: **https://freemodelsforall.hopto.org/**
+2. Sign up / Log in
+3. Copy your API key
+4. Use it in build/run command OR enter when prompted
+
+### Launching Hermes AI Agent
+
+**From Terminal:**
+```bash
 hermes-agent
-
-# Or from Applications menu
-# Click "Hermes AI Agent"
 ```
 
-### Interface
+**From Desktop:**
+- Open Applications menu
+- Click **"Hermes AI Agent"** icon
+- Terminal will open with Hermes running
 
-```
-$ hermes-agent
+### Hermes AI Agent Icon
 
-══════════════════════════════════════════════════════════════
-  🎤 HERMES AI AGENT - Interactive Mode
-  Type 'help' for commands, 'quit' to exit
-══════════════════════════════════════════════════════════════
-
-You: help
-
-Hermes: Shows available commands
-
-You: system info
-
-Hermes: Returns system information
-
-You: quit
-```
+Hermes has a **purple "H" icon** visible in Applications menu:
+- Icon location: `/usr/share/icons/hicolor/256x256/apps/hermes-ai.svg`
+- Desktop entry: `/usr/share/applications/hermes-agent.desktop`
 
 ---
 
 ## 🎨 Application 2: AI Canvas (Full GUI Application)
 
-**AI Canvas** is the **main full-featured AI desktop application** with complete functionality - a beautiful GUI similar to Claude Desktop.
+### Overview
 
-### Features
+**AI Canvas** is a **full-featured GUI application** with:
+- ✅ **Software Icon** - Visible in Applications menu
+- ✅ **GUI Mode** - Beautiful desktop interface
+- ✅ **API Key via Environment Variable** - Set during deployment
+- ✅ **First-Run Setup Wizard** - Or pre-configured via build arg
 
-✅ **Beautiful Modern GUI**
-- Dark theme interface (GitHub-dark inspired)
-- Left sidebar with model selection & chat history
-- Chat interface with real-time streaming
-- Model selection dropdown
-- Settings panel
-- Professional, polished appearance
+### How to Set API Key for AI Canvas
 
-✅ **First-Run Setup Wizard**
-- Beautiful welcome screen on first launch
-- API key input with clear instructions
-- Direct link to portal: https://freemodelsforall.hopto.org/
-- Step-by-step guidance
-- Automatic validation and secure saving
+**Method 1: Set During Build**
 
-✅ **Complete AI Functionality**
-- Real-time streaming chat responses
-- Multiple model support via gateway
-- Tool integration (file operations)
-- Chat history management
-- New chat creation
-- Model switching on the fly
-
-✅ **Available Tools (Full Functionality)**
-| Tool | Description |
-|------|-------------|
-| `write_file` | Create or overwrite files |
-| `delete_file` | Delete files |
-| `read_file` | Read file contents |
-| `list_directory` | List directory contents |
-
-✅ **Model Support**
-- Fetches available models from gateway automatically
-- Falls back to hardcoded model list if gateway unavailable
-- Default model: Claude Opus 5 (auto-selected)
-- Easy model switching via sidebar dropdown
-
-✅ **Error Handling**
-- API error detection with retry logic (3 retries)
-- Tool compatibility fallback
-- Invalid API key detection
-- Network error handling
-- User-friendly error messages
-
----
-
-## 🖥️ Interface Layout
-
+```bash
+# Build with API key
+docker build \
+  --build-arg HERMES_API_KEY="আপনার-API-কী-এখানে" \
+  -t xrdp .
 ```
-┌──────────────────────────────────────────────────────────────────────┐
-│  AI Canvas                                      ⚙️ Settings        │
-├──────────────┬───────────────────────────────────────────────────────┤
-│              │                                                       │
-│  MODEL       │   💬 Chat                                            │
-│  ┌──────────│                                                       │
-│  │ Claude  │   ┌─────────────────────────────────────────────────┐ │
-│  │ Opus 5  │   │                                                 │ │
-│  │ ▼       │   │  You: Hello!                                    │ │
-│  └─────────│   │  ✨ Hello! How can I help you today?            │ │
-│            │   │                                                 │ │
-│  CHATS     │   │  You: Create a file test.txt with "Hello"       │ │
-│  ┌─────────│   │  ✨ [Thinking with spinner...]                 │ │
-│  │ 💬 Chat │   │  ✨ ⚙️ Running tool write_file(...)            │ │
-│  │ History │   │  ✨ 📄 Success: File written to 'test.txt'     │ │
-│  │         │   │                                                 │ │
-│  │ • Chat1 │   │                                                 │ │
-│  │ • Chat2 │   └─────────────────────────────────────────────────┘ │
-│  │ • New   │                                                      │
-│  │   [+]   │   Type your message...                 [Send]        │
-│  └─────────│                                                      │
-│            │                                                       │
-│  +-------------------------------------------------------+       │
-│  |  🔑 API: Configured     ⚙️ Settings                   |       │
-│  +-------------------------------------------------------+       │
-└──────────────────────────────────────────────────────────────────────┘
+
+**Method 2: Set When Running Container**
+
+```bash
+# Run with environment variable
+docker run -d -p 3389:3389 \
+  -e HERMES_API_KEY="আপনার-API-কী-এখানে" \
+  -v xrdp-root-home:/root \
+  --name xrdp-desktop \
+  xrdp
 ```
+
+**Method 3: First-Run Wizard (If key not set)**
+
+- Launch AI Canvas from Applications menu or terminal
+- Welcome screen appears with API key input
+- Enter key and click Continue
+- Key saved to `~/.ai_canvas/credentials.json`
+
+### How to Get API Key
+
+1. Visit: **https://freemodelsforall.hopto.org/**
+2. Sign up / Log in
+3. Copy your API key
+4. Use it in build/run command OR enter in first-run wizard
+
+### Launching AI Canvas
+
+**From Terminal:**
+```bash
+ai-canvas
+```
+
+**From Desktop:**
+- Open Applications menu
+- Click **"AI Canvas"** icon
+- GUI application opens
+
+### AI Canvas Icon
+
+AI Canvas has a **blue "AI" icon** visible in Applications menu:
+- Icon location: `/usr/share/icons/hicolor/256x256/apps/ai-canvas.svg`
+- Desktop entry: `/usr/share/applications/ai-canvas.desktop`
 
 ---
 
 ## 🚀 Quick Start (Copy-Paste Guide)
 
-### Prerequisites
+### Step 1: Get API Key
 
-- ✅ **Docker installed** on your system
-- ✅ **Terminal/command prompt** access
-- ✅ **RDP client** (Windows Remote Desktop, Remmina for Linux, Microsoft Remote Desktop for macOS)
+1. Visit **https://freemodelsforall.hopto.org/**
+2. Sign up / Log in
+3. Copy your API key
 
-### Step 1: Clone This Repository
+### Step 2: Clone This Repository
 
 ```bash
 git clone https://github.com/jjkh1673-tech/ubuntu-xrdp.git
 cd ubuntu-xrdp
 ```
 
-### Step 2: Build the Docker Image
+### Step 3: Build with API Key (Recommended)
 
 ```bash
-docker build -t xrdp .
+docker build \
+  --build-arg HERMES_API_KEY="আপনার-API-কী-এখানে" \
+  -t xrdp .
 ```
 
-> ⏱️ **Time**: First build takes 5-15 minutes (includes Python GUI dependencies and fonts)
+> Replace `আপনার-API-কী-এখানে` with your actual API key from https://freemodelsforall.hopto.org/
 
-### Step 3: Run the Container
+### Step 4: Run the Container
 
 ```bash
 docker run -d -p 3389:3389 -v xrdp-root-home:/root --name xrdp-desktop xrdp
 ```
 
-### Step 4: Connect via RDP
+### Step 5: Connect via RDP
 
-1. Open your RDP client
-2. Connect to: `localhost:3389` (or your machine's IP address)
-3. Login with:
-   - **Username**: `root`
-   - **Password**: `root`
+1. Open RDP client
+2. Connect to: `localhost:3389`
+3. Login: `root` / `root`
 
-### Step 5: Launch Applications
+### Step 6: Launch Applications
 
-**Option A - From Desktop Menu:**
-1. Open Applications menu (start button)
-2. Find and click **"AI Canvas"** for full GUI
-3. Or click **"Hermes AI Agent"** for simple terminal agent
-
-**Option B - From Terminal:**
+**AI Canvas (Full GUI):**
 ```bash
-# Launch AI Canvas (full GUI)
 ai-canvas
+```
+Or click "AI Canvas" in Applications menu
 
-# Or launch Hermes AI Agent (terminal)
+**Hermes AI Agent (Terminal):**
+```bash
 hermes-agent
 ```
-
-### Step 6: First-Time Setup (AI Canvas)
-
-On first launch of AI Canvas:
-
-1. **Welcome screen appears** with API key instructions
-2. **Visit**: https://freemodelsforall.hopto.org/
-3. **Sign up/Log in** and copy your API key
-4. **Paste** the key in the input box
-5. **Click** "🚀 Continue with API Key"
-6. **Models load** automatically
-7. **Start chatting!**
+Or click "Hermes AI Agent" in Applications menu
 
 ---
 
@@ -226,72 +224,55 @@ On first launch of AI Canvas:
 
 ```
 ubuntu-xrdp/
-├── Dockerfile              # ← Main config (Ubuntu 24.04 + both AI apps)
+├── Dockerfile              # ← Build configuration (API key support)
 ├── README.md               # ← This file
 │
-├── hermes-ai/              # ← Hermes AI Agent (simple terminal agent)
-│   ├── main.py             # Terminal agent application
-│   └── README.md           # Hermes-specific documentation
+├── hermes-ai/              # ← Hermes AI Agent (Terminal App)
+│   ├── main.py             # Terminal agent code
+│   └── README.md           # Hermes documentation
 │
-├── ai-canvas/              # ← AI Canvas (full GUI application)
-│   ├── main.py             # Main GUI application (full-featured)
+├── ai-canvas/              # ← AI Canvas (Full GUI App)
+│   ├── main.py             # GUI application code
 │   ├── requirements.txt    # Python dependencies
 │   └── icons/
 │       └── icon.svg        # Application icon
 │
-├── hermes-agent            # ← Terminal launcher script (symlink target)
-├── start.sh                # Container startup script
-└── pulse-client.conf       # Audio config for XRDP
+├── hermes-agent            # ← Terminal launcher (symlink)
+├── start.sh                # Container startup
+└── pulse-client.conf       # Audio config
 ```
-
-### Which File Does What?
-
-| File | Purpose | Modify For |
-|------|---------|------------|
-| **Dockerfile** | Base OS, packages, app installation | Change OS, add packages |
-| **ai-canvas/main.py** | AI Canvas GUI (full features) | Customize GUI, add features |
-| **hermes-ai/main.py** | Hermes terminal agent | Customize agent behavior |
-| **start.sh** | Service startup | Change service order |
-| **pulse-client.conf** | Audio configuration | Audio troubleshooting |
 
 ---
 
 ## 🛠️ Commands Reference
 
 ```bash
-# Build the image
-docker build -t xrdp .
+# Build with API key
+docker build --build-arg HERMES_API_KEY="your-key-here" -t xrdp .
 
-# Run the container
+# Run with API key
+docker run -d -p 3389:3389 -e HERMES_API_KEY="your-key-here" -v xrdp-root-home:/root --name xrdp-desktop xrdp
+
+# Run without API key (will prompt on first launch)
 docker run -d -p 3389:3389 -v xrdp-root-home:/root --name xrdp-desktop xrdp
 
-# Check running containers
-docker ps
+# Launch Hermes AI Agent
+hermes-agent
 
-# View container logs
-docker logs xrdp-desktop
+# Launch AI Canvas
+ai-canvas
 
 # Enter container
 docker exec -it xrdp-desktop bash
 
-# Launch AI Canvas from inside container
-docker exec -it xrdp-desktop ai-canvas
-
-# Launch Hermes AI Agent from inside container
-docker exec -it xrdp-desktop hermes-agent
-
-# Or directly
-docker exec -it xrdp-desktop python3 /opt/ai-canvas/main.py
-docker exec -it xrdp-desktop python3 /opt/hermes-ai/main.py
+# View logs
+docker logs xrdp-desktop
 
 # Stop container
 docker stop xrdp-desktop
 
-# Remove container
-docker rm xrdp-desktop
-
-# Full reset (rebuild from scratch)
-docker stop xrdp-desktop && docker rm xrdp-desktop && docker rmi xrdp && docker build -t xrdp . && docker run -d -p 3389:3389 -v xrdp-root-home:/root --name xrdp-desktop xrdp
+# Full reset
+docker stop xrdp-desktop && docker rm xrdp-desktop && docker rmi xrdp && docker build --build-arg HERMES_API_KEY="your-key" -t xrdp . && docker run -d -p 3389:3389 -v xrdp-root-home:/root --name xrdp-desktop xrdp
 ```
 
 ---
@@ -300,99 +281,125 @@ docker stop xrdp-desktop && docker rm xrdp-desktop && docker rmi xrdp && docker 
 
 ### API Key Storage
 
-- **AI Canvas**: Keys stored in `~/.ai_canvas/credentials.json` (permissions 600)
-- **Hermes Agent**: Keys stored in `~/.hermes/credentials.json` (permissions 600)
-- Keys are NEVER logged or shared
-- Environment variables also supported: `API_KEY` or `OPENAI_API_KEY`
+| Application | Storage Location | Permissions |
+|-------------|------------------|-------------|
+| Hermes AI Agent | `~/.hermes/credentials.json` | 600 (owner only) |
+| AI Canvas | `~/.ai_canvas/credentials.json` | 600 (owner only) |
 
-### Changing Default Password
+### Environment Variables
 
-```bash
-docker build --build-arg ROOT_PASSWORD="YourSecurePassword123!" -t xrdp .
-```
+Both applications support these environment variables:
+- `HERMES_API_KEY` - Primary variable (used by both)
+- `API_KEY` - Alternative for AI Canvas
+- `OPENAI_API_KEY` - Alternative for AI Canvas
+
+### Build-Time Security
+
+- API key passed via `--build-arg` is stored during build
+- Key is saved to credentials file with restricted permissions
+- To change key: rebuild or use first-run wizard
 
 ---
 
 ## 🐛 Troubleshooting
 
-### AI Canvas Not Opening
-
-```bash
-# Check if application exists
-which ai-canvas
-ls -la /opt/ai-canvas/
-
-# Check Python dependencies
-pip3 list | grep customtkinter
-
-# Try running directly
-python3 /opt/ai-canvas/main.py
-
-# Check for errors
-docker exec xrdp-desktop python3 /opt/ai-canvas/main.py 2>&1
-```
-
-### Hermes Agent Not Found
+### Hermes AI Agent Not Working
 
 ```bash
 # Check if Hermes is installed
 which hermes-agent
-ls -la /opt/hermes-ai/
 
-# Reinstall if needed
-pip3 install customtkinter openai Pillow
+# Check if API key is set
+cat ~/.hermes/credentials.json
+
+# Launch and check output
+hermes-agent
 ```
 
-### GUI Not Displaying
+### AI Canvas Not Opening
 
 ```bash
-# Check if tkinter is available
-python3 -c "import tkinter; print('tkinter OK')"
+# Check if AI Canvas is installed
+which ai-canvas
 
-# Check for display issues
-echo $DISPLAY
+# Check Python dependencies
+pip3 list | grep customtkinter
 
-# Check X11 forwarding
-docker exec xrdp-desktop echo $DISPLAY
+# Launch directly
+python3 /opt/ai-canvas/main.py
 ```
 
-### Connection Issues
+### API Key Not Working
 
-1. Verify container is running: `docker ps`
-2. Check port mapping: `docker port xrdp-desktop`
-3. Try: `localhost:3389` or `127.0.0.1:3389`
+```bash
+# Check credentials file
+cat ~/.hermes/credentials.json
+cat ~/.ai_canvas/credentials.json
 
-### Black Screen After Login
+# Re-enter key via application
+hermes-agent  # Will prompt for key
+ai-canvas       # Will show setup wizard
+```
 
-1. Check XFCE4: `docker exec xrdp-desktop dpkg -l | grep xfce4`
-2. Check session: `docker exec xrdp-desktop cat /root/.xsession`
-3. Restart container: `docker restart xrdp-desktop`
+### Both Applications Use Same Portal
 
-### API Key Issues
-
-- First launch shows setup wizard automatically
-- Visit https://freemodelsforall.hopto.org/ to get key
-- Or configure via Settings panel in AI Canvas
-
----
-
-## 🤝 Contributing
-
-Contributions welcome! When contributing:
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test both Hermes and AI Canvas functionality
-5. Submit a pull request
+If API key doesn't work:
+1. Verify key at https://freemodelsforall.hopto.org/
+2. Ensure key is copied correctly (no extra spaces)
+3. Try regenerating key if necessary
 
 ---
 
-## 📄 License
+## ⚠️ OS Compatibility Notes
 
-Based on [hopingboyz/debianxrdp](https://github.com/hopingboyz/debianxrdp)
+| Operating System | Support | Notes |
+|------------------|---------|-------|
+| **Ubuntu Linux** | ✅ Full Support | Primary target |
+| **Debian** | ✅ Full Support | Compatible |
+| **Windows** | ⚠️ Via RDP | Use RDP to access Linux desktop |
+| **macOS** | ⚠️ Via RDP | Use RDP client to access Linux desktop |
 
-Hermes AI Agent and AI Canvas are included as built-in features for user assistance.
+**Important:** Both Hermes AI Agent and AI Canvas are Linux applications. They run inside the Ubuntu XRDP container. To use them on Windows/macOS:
+1. Deploy this Docker container
+2. Connect via RDP
+3. Use applications inside Linux desktop
+
+---
+
+## 📋 Summary Comparison
+
+| Feature | Hermes AI Agent | AI Canvas |
+|---------|----------------|-----------|
+| **Type** | Terminal application | Full GUI application |
+| **Interface** | Command-line in terminal | Beautiful desktop GUI |
+| **API Key Setup** | Build arg OR first-run prompt | Build arg OR first-run wizard |
+| **API Key Portal** | https://freemodelsforall.hopto.org/ | https://freemodelsforall.hopto.org/ |
+| **Icon** | Purple "H" icon | Blue "AI" icon |
+| **Launch Method** | `hermes-agent` or Applications menu | `ai-canvas` or Applications menu |
+| **Running Mode** | Terminal | GUI (desktop window) |
+| **Primary Use** | Setup & basic assistance | Full AI chat with tools |
+
+---
+
+## 📖 Detailed Instructions
+
+### For Hermes AI Agent:
+
+1. **Get API key**: Go to https://freemodelsforall.hopto.org/
+2. **Choose setup method**: Build arg OR first-run prompt
+3. **If build arg**: `docker build --build-arg HERMES_API_KEY="key" -t xrdp .`
+4. **If first-run**: Just run `hermes-agent` and enter key when prompted
+5. **Launch**: Type `hermes-agent` or click icon in Applications menu
+6. **Icon**: Purple "H" icon visible in Applications menu
+
+### For AI Canvas:
+
+1. **Get API key**: Go to https://freemodelsforall.hopto.org/
+2. **Choose setup method**: Build arg OR first-run wizard
+3. **If build arg**: `docker build --build-arg HERMES_API_KEY="key" -t xrdp .`
+4. **If first-run**: Click app icon, enter key in welcome screen
+5. **Launch**: Type `ai-canvas` or click icon in Applications menu
+6. **Icon**: Blue "AI" icon visible in Applications menu
 
 ---
 
@@ -402,44 +409,10 @@ Hermes AI Agent and AI Canvas are included as built-in features for user assista
 |----------|------|
 | Docker Documentation | [docs.docker.com](https://docs.docker.com/) |
 | XRDP Project | [github.com/neutrinolabs/xrdp](https://github.com/neutrinolabs/xrdp) |
-| XFCE4 Desktop | [xfce.org](https://xfce.org/) |
 | Ubuntu Download | [ubuntu.com/download](https://ubuntu.com/download) |
-| **API Key Portal** | **[freemodelsforall.hopto.org](https://freemodelsforall.hopto.org/)** |
+| **API Key Portal (Both Apps)** | **[freemodelsforall.hopto.org](https://freemodelsforall.hopto.org/)** |
 | This Repository | [github.com/jjkh1673-tech/ubuntu-xrdp](https://github.com/jjkh1673-tech/ubuntu-xrdp) |
 
 ---
 
-## 🏁 Summary
-
-| Feature | Hermes AI Agent | AI Canvas |
-|---------|----------------|-----------|
-| **Type** | Terminal agent | Full GUI application |
-| **Interface** | Command-line | Beautiful desktop GUI |
-| **Purpose** | Setup & basic assistance | Full AI chat with tools |
-| **API Setup** | Built-in wizard | Built-in wizard |
-| **Chat** | Text-based | Streaming GUI chat |
-| **Tools** | Basic help | write_file, delete_file, read_file, list_directory |
-| **Models** | N/A | Multiple via gateway |
-| **Launch** | `hermes-agent` | `ai-canvas` or desktop icon |
-| **Complexity** | Simple | Full-featured |
-
----
-
-## ⚠️ OS Compatibility Notes
-
-| Operating System | Support | Notes |
-|------------------|---------|-------|
-| **Ubuntu Linux** | ✅ Full Support | Primary target |
-| **Debian Linux** | ✅ Full Support | Compatible |
-| **Kali Linux** | ⚠️ Experimental | May need adjustments |
-| **Windows** | ❌ Apps Not Native | Use RDP to access Linux desktop where apps run |
-| **macOS** | ❌ Apps Not Native | Use RDP client to access Linux desktop |
-
-**Important**: Both Hermes AI Agent and AI Canvas are Linux applications designed to run inside the Ubuntu XRDP container. They cannot run directly on Windows or macOS. To use them:
-1. Deploy this Docker container
-2. Connect via RDP from Windows/macOS
-3. Use the applications inside the Linux desktop
-
----
-
-> **💡 TIP**: After connecting via RDP, you'll see both "AI Canvas" and "Hermes AI Agent" in the Applications menu. Start with AI Canvas for the full experience - it will guide you through API key setup on first launch!
+> **💡 TIP**: Get your API key from https://freemodelsforall.hopto.org/ first. Then build with `--build-arg HERMES_API_KEY="your-key"` for automatic setup. Both Hermes AI Agent and AI Canvas will work immediately after deployment!
