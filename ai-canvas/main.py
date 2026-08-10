@@ -1608,11 +1608,26 @@ Your key is stored securely and never shared.
         self.status_label.configure(text=message)
 
     def _create_icon(self):
-        """Create application icon."""
+        """Create application icon from file or generate fallback."""
+        # Try to load the actual icon file first
+        icon_paths = [
+            "/opt/ai-canvas/icons/ai-canvas-icon.png",
+            "/usr/share/icons/hicolor/256x256/apps/ai-canvas.png",
+            "/usr/share/icons/hicolor/128x128/apps/ai-canvas.png",
+        ]
+        
+        for icon_path in icon_paths:
+            if os.path.exists(icon_path):
+                try:
+                    return ImageTk.PhotoImage(Image.open(icon_path))
+                except:
+                    continue
+        
+        # Fallback: generate simple icon
         size = 64
         image = Image.new('RGBA', (size, size), (13, 17, 23, 255))
         draw = ImageDraw.Draw(image)
-
+        
         # Gradient circle
         for i in range(size // 2):
             r = int(88 + (90 - 88) * i / (size // 2))
@@ -1623,10 +1638,10 @@ Your key is stored securely and never shared.
                 outline=(r, g, b, 255),
                 width=2
             )
-
+        
         # AI text
         draw.text((size // 2 - 8, size // 2 - 10), "AI", fill=(255, 255, 255, 255))
-
+        
         return ImageTk.PhotoImage(image)
 
     def run(self):

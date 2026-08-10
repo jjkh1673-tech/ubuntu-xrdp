@@ -89,6 +89,14 @@ RUN if [ -n "$HERMES_API_KEY" ]; then \
         echo "⚠️  No HERMES_API_KEY provided during build - Hermes will prompt on first run"; \
     fi
 
+# Also save API key for AI Canvas if provided
+RUN if [ -n "$HERMES_API_KEY" ]; then \
+        mkdir -p /root/.ai_canvas && \
+        echo "{\"api_key\": \"$HERMES_API_KEY\", \"saved_at\": \"$(date -Iseconds)\", \"provider\": \"custom_gateway\"}" > /root/.ai_canvas/credentials.json && \
+        chmod 600 /root/.ai_canvas/credentials.json && \
+        echo "✅ AI Canvas API key pre-configured during build"; \
+    fi
+
 # Set root password  
 RUN echo "root:root" | chpasswd
 
@@ -129,12 +137,9 @@ RUN chmod +x /opt/hermes-ai/main.py
 COPY hermes-ai/icons/hermes-agent-48x48.png /usr/share/icons/hicolor/48x48/apps/hermes-ai.png
 COPY hermes-ai/icons/hermes-agent-128x128.png /usr/share/icons/hicolor/128x128/apps/hermes-ai.png
 COPY hermes-ai/icons/hermes-agent-256x256.png /usr/share/icons/hicolor/256x256/apps/hermes-ai.png
-RUN ln -sf /usr/share/icons/hicolor/256x256/apps/hermes-ai.png /usr/share/icons/hicolor/48x48/apps/hermes-ai.png
 
 # Create terminal launcher for Hermes AI
-RUN echo '#!/bin/bash
-python3 /opt/hermes-ai/main.py
-' > /usr/local/bin/hermes-agent && chmod +x /usr/local/bin/hermes-agent
+RUN echo '#!/bin/bash\npython3 /opt/hermes-ai/main.py\n' > /usr/local/bin/hermes-agent && chmod +x /usr/local/bin/hermes-agent
 
 # ============================================================================
 # AI CANVAS - Full-Featured AI Desktop Application
@@ -145,74 +150,31 @@ COPY ai-canvas/requirements.txt /opt/ai-canvas/requirements.txt
 COPY ai-canvas/icons/ai-canvas-real-48x48.png /opt/ai-canvas/icons/ai-canvas-icon.png
 COPY ai-canvas/icons/ai-canvas-real-128x128.png /usr/share/icons/hicolor/128x128/apps/ai-canvas.png
 COPY ai-canvas/icons/ai-canvas-real-256x256.png /usr/share/icons/hicolor/256x256/apps/ai-canvas.png
-RUN ln -sf /usr/share/icons/hicolor/256x256/apps/ai-canvas.png /usr/share/icons/hicolor/48x48/apps/ai-canvas.png
+
+# Create terminal launchers for AI Canvas
+RUN echo '#!/bin/bash\npython3 /opt/ai-canvas/main.py\n' > /usr/local/bin/ai-canvas && chmod +x /usr/local/bin/ai-canvas
+RUN echo '#!/bin/bash\npython3 /opt/ai-canvas/main.py\n' > /usr/local/bin/ai && chmod +x /usr/local/bin/ai
 
 RUN chmod +x /opt/ai-canvas/main.py
 
-# Create desktop shortcut for AI Canvas
-RUN echo '[Desktop Entry]
-Name=AI Canvas
-Comment=Full-Featured AI Desktop Application - Chat, Tools, Multiple Models
-Exec=ai-canvas
-Icon=ai-canvas
-Terminal=false
-Type=Application
-Categories=Utility;AI;Development;Graphics;
-Keywords=AI;assistant;chatbot;canvas;tools;models;
-StartupNotify=true
-StartupWMClass=AI Canvas' > /usr/share/applications/ai-canvas.desktop
+# Create desktop shortcuts
+RUN echo '[Desktop Entry]\nName=AI Canvas\nComment=Full-Featured AI Desktop Application - Chat, Tools, Multiple Models\nExec=ai-canvas\nIcon=ai-canvas\nTerminal=false\nType=Application\nCategories=Utility;AI;Development;Graphics;\nKeywords=AI;assistant;chatbot;canvas;tools;models;\nStartupNotify=true\nStartupWMClass=AI Canvas' > /usr/share/applications/ai-canvas.desktop
 
-# Hermes AI Agent desktop shortcut
-RUN echo '[Desktop Entry]
-Name=Hermes AI Agent
-Comment=Built-in Agent - Setup & Basic Assistant - Terminal Mode
-Exec=hermes-agent
-Icon=hermes-ai
-Terminal=true
-Type=Application
-Categories=Utility;AI;Development;
-Keywords=AI;agent;setup;helper;terminal;
-StartupNotify=true' > /usr/share/applications/hermes-agent.desktop
+RUN echo '[Desktop Entry]\nName=Hermes AI Agent\nComment=Built-in Agent - Setup & Basic Assistant - Terminal Mode\nExec=hermes-agent\nIcon=hermes-ai\nTerminal=true\nType=Application\nCategories=Utility;AI;Development;\nKeywords=AI;agent;setup;helper;terminal;\nStartupNotify=true' > /usr/share/applications/hermes-agent.desktop
 
 # ============================================================================
 # WELCOME MESSAGE
 # ============================================================================
 
-RUN echo '#!/bin/bash
-echo ""
-echo "╔════════════════════════════════════════════════════════════════╗"
-echo "║                                                                ║"
-echo "║   ✨ Welcome to Ubuntu XRDP with AI Applications               ║"
-echo "║                                                                ║"
-echo "║   Available Applications:                                      ║"
-echo "║   • AI Canvas - Full AI Desktop GUI (Applications menu)       ║"
-echo "║   • Hermes AI Agent - Terminal Agent (Applications menu)      ║"
-echo "║                                                                ║"
-echo "║   Terminal Commands:                                           ║"
-echo "║   • ai-canvas     - Launch AI Canvas GUI                      ║"
-echo "║   • hermes-agent  - Launch Hermes terminal agent              ║"
-echo "║                                                                ║"
-echo "║   ════════════════════════════════════════════════════════════ ║"
-echo "║                                                                ║"
-echo "║   API KEY INFORMATION:                                         ║"
-echo "║   Both applications use the same API key:                     ║"
-echo "║   🔑 https://freemodelsforall.hopto.org/                     ║"
-echo "║                                                                ║"
-echo "║   • Set HERMES_API_KEY during build for auto-configuration    ║"
-echo "║     docker build --build-arg HERMES_API_KEY=\"your-key\" -t xrdp ║"
-echo "║                                                                ║"
-echo "║   • Or set when running:                                       ║"
-echo "║     docker run -e HERMES_API_KEY=\"your-key\" ...              ║"
-echo "║                                                                ║"
-echo "║   • First launch will guide you if key not provided            ║"
-echo "║                                                                ║"
-echo "╚════════════════════════════════════════════════════════════════╝"
-echo ""
-' > /etc/profile.d/welcome.sh && chmod +x /etc/profile.d/welcome.sh
+RUN echo '#!/bin/bash\necho ""\necho "╔════════════════════════════════════════════════════════════════╗"\necho "║                                                                ║"\necho "║   ✨ Welcome to Ubuntu XRDP with AI Applications               ║"\necho "║                                                                ║"\necho "║   Available Applications:                                      ║"\necho "║   • AI Canvas - Full AI Desktop GUI (Applications menu)       ║"\necho "║   • Hermes AI Agent - Terminal Agent (Applications menu)      ║"\necho "║                                                                ║"\necho "║   Terminal Commands:                                           ║"\necho "║   • ai          - Launch AI Canvas GUI (shortcut)             ║"\necho "║   • ai-canvas   - Launch AI Canvas GUI                        ║"\necho "║   • hermes-agent - Launch Hermes terminal agent               ║"\necho "║                                                                ║"\necho "║   ════════════════════════════════════════════════════════════ ║"\necho "║                                                                ║"\necho "║   API KEY INFORMATION:                                         ║"\necho "║   Both applications use the same API key:                     ║"\necho "║   🔑 https://freemodelsforall.hopto.org/                     ║"\necho "║                                                                ║"\necho "║   • Set HERMES_API_KEY during build for auto-configuration    ║"\necho "║     docker build --build-arg HERMES_API_KEY=\"your-key\" -t xrdp ║"\necho "║                                                                ║"\necho "║   • Or set when running:                                       ║"\necho "║     docker run -e HERMES_API_KEY=\"your-key\" ...              ║"\necho "║                                                                ║"\necho "║   • First launch will guide you if key not provided            ║"\necho "║                                                                ║"\necho "╚════════════════════════════════════════════════════════════════╝"\necho ""\n' > /etc/profile.d/welcome.sh && chmod +x /etc/profile.d/welcome.sh
 
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
 EXPOSE 3389
+
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD service xrdp status || exit 1
 
 CMD ["/start.sh"]

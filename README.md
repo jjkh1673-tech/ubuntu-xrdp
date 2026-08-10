@@ -219,9 +219,10 @@ hermes-agent
 ```
 Or click purple "Hermes AI Agent" icon in Applications menu
 
-**🔵 AI Canvas (Full GUI):**
+**🔵 AI Canvas (Full GUI):** - Three ways to launch:
 ```bash
-ai-canvas
+ai          # Short command (recommended)
+ai-canvas   # Full command
 ```
 Or click blue "AI Canvas" icon in Applications menu
 
@@ -235,24 +236,21 @@ ubuntu-xrdp/
 ├── README.md               # ← This file
 │
 ├── hermes-ai/              # ← Hermes AI Agent (Terminal App)
-│   ├── main.py             # Terminal agent code
+│   ├── main.py             # Terminal agent code (renamed from hermes-agent)
 │   ├── icons/
-│   │   ├── hermes-icon.svg              # Vector icon source
-│   │   ├── hermes-icon-48x48.png        # 48x48 icon
-│   │   ├── hermes-icon-128x128.png      # 128x128 icon
-│   │   └── hermes-icon-256x256.png      # 256x256 icon
+│   │   ├── hermes-agent-48x48.png        # 48x48 icon (REAL Hermes logo)
+│   │   ├── hermes-agent-128x128.png      # 128x128 icon
+│   │   └── hermes-agent-256x256.png      # 256x256 icon
 │   └── README.md           # Hermes documentation
 │
 ├── ai-canvas/              # ← AI Canvas (Full GUI App)
 │   ├── main.py             # GUI application code
 │   ├── requirements.txt    # Python dependencies
 │   └── icons/
-│       ├── ai-canvas-icon.svg           # Vector icon source
-│       ├── ai-canvas-icon-48x48.png     # 48x48 icon
-│       ├── ai-canvas-icon-128x128.png   # 128x128 icon
-│       └── ai-canvas-icon-256x256.png   # 256x256 icon
+│       ├── ai-canvas-real-48x48.png     # 48x48 icon (REAL icon)
+│       ├── ai-canvas-real-128x128.png   # 128x128 icon
+│       └── ai-canvas-real-256x256.png   # 256x256 icon
 │
-├── hermes-agent            # ← Terminal launcher (symlink)
 ├── start.sh                # Container startup
 └── pulse-client.conf       # Audio config
 ```
@@ -274,8 +272,9 @@ docker run -d -p 3389:3389 -v xrdp-root-home:/root --name xrdp-desktop xrdp
 # Launch Hermes AI Agent
 hermes-agent
 
-# Launch AI Canvas
+# Launch AI Canvas (two ways)
 ai-canvas
+ai
 
 # Enter container
 docker exec -it xrdp-desktop bash
@@ -390,7 +389,7 @@ If API key doesn't work:
 | **Icon** | Purple wings + H | Blue canvas + AI |
 | **API Key Setup** | Build arg OR first-run prompt | Build arg OR first-run wizard |
 | **API Key Portal** | https://freemodelsforall.hopto.org/ | https://freemodelsforall.hopto.org/ |
-| **Launch Method** | `hermes-agent` or Applications menu | `ai-canvas` or Applications menu |
+| **Launch Method** | `hermes-agent` or Applications menu | `ai`, `ai-canvas` or Applications menu |
 | **Running Mode** | Terminal | GUI (desktop window) |
 | **Primary Use** | Setup & basic assistance | Full AI chat with tools |
 
