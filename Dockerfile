@@ -29,12 +29,38 @@ RUN apt update && apt install -y \
     python3-pip \
     python3-urllib3 \
     python3-tk \
-    libxcb-xinerama0 && \
+    libxcb-xinerama0 \
+    libxkbcommon0 \
+    libxcb1 \
+    libx11-6 \
+    libxcb-randr0 \
+    libxcb-xinerama0 \
+    libxcb-cursor0 \
+    libxcb-keysyms1 \
+    libxcb-shape0 \
+    libxcb-render-util0 \
+    libxcb-render0 \
+    libxcb-screensaver0 \
+    libxcb-shm0 \
+    libxcb-sync1 \
+    libxcb-xfixes0 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxext6 \
+    libxfixes3 \
+    libxinerama1 \
+    libxrandr2 \
+    libxtst6 \
+    fonts-noto-color-emoji \
+    fonts-noto-cjk \
+    fonts-wqy-zenhei \
+    fonts-arphic-uming \
+    fonts-arphic-ukai && \
     apt clean && rm -rf /var/lib/apt/lists/*
-# Python3 + pip + tkinter added for Hermes AI Desktop GUI
-# libxcb-xinerama0 required for tkinter on some systems
+# Python3 + pip + tkinter + fonts for GUI applications
+# Unicode fonts for proper text rendering
 
-# Install Python dependencies for Hermes GUI
+# Install Python dependencies
 RUN pip3 install --no-cache-dir customtkinter openai Pillow
 
 # Set root password  
@@ -54,38 +80,86 @@ RUN sed -i 's/crypt_level=high/crypt_level=low/' /etc/xrdp/xrdp.ini && \
 RUN adduser xrdp ssl-cert
 
 # ============================================================================
-# HERMES AI DESKTOP - Built-in AI Agent with Beautiful GUI
-# ============================================================================
-# Hermes AI Desktop একেবারে বিল্ট-ইন হিসেবে যোগ করা হয়েছে।
-# ইউজারকে কোনো অতিরিক্ত সেটআপের প্রয়োজন নেই - ডেস্কটপে আইকনে ক্লিক করুন বা
-# টার্মিনালে 'hermes' লিখুন।
-# প্রথমবার চালালে API key সেটআপের জন্য উইজার্ড আসবে।
+# APPLICATION DIRECTORY STRUCTURE
 # ============================================================================
 
-# Create Hermes application directory
-RUN mkdir -p /opt/hermes-ai
-
-# Copy Hermes application files
-COPY hermes-gui/main.py /opt/hermes-ai/main.py
-COPY hermes-gui/requirements.txt /opt/hermes-ai/requirements.txt
-
-# Create desktop shortcut for Hermes AI Desktop
-RUN mkdir -p /usr/share/applications && \
+# Create application directories
+RUN mkdir -p /opt/hermes-ai && \
+    mkdir -p /opt/ai-canvas && \
+    mkdir -p /opt/ai-canvas/icons && \
+    mkdir -p /usr/share/applications && \
     mkdir -p /usr/share/icons/hicolor/48x48/apps && \
-    mkdir -p /usr/share/icons/hicolor/256x256/apps && \
-    echo '[Desktop Entry]
-Name=Hermes AI Desktop
-Comment=Built-in AI Agent with Beautiful GUI - Ubuntu XRDP
-Exec=python3 /opt/hermes-ai/main.py
-Icon=hermes-ai
+    mkdir -p /usr/share/icons/hicolor/256x256/apps
+
+# ============================================================================
+# HERMES AI AGENT - Simple Terminal Agent
+# ============================================================================
+
+COPY hermes-agent /opt/hermes-ai/main.py
+RUN chmod +x /opt/hermes-ai/main.py
+
+# Create terminal launcher for Hermes AI
+RUN echo '#!/bin/bash
+python3 /opt/hermes-ai/main.py
+' > /usr/local/bin/hermes-agent && chmod +x /usr/local/bin/hermes-agent
+
+# ============================================================================
+# AI CANVAS - Full-Featured AI Desktop Application
+# ============================================================================
+
+COPY ai-canvas/main.py /opt/ai-canvas/main.py
+COPY ai-canvas/requirements.txt /opt/ai-canvas/requirements.txt
+COPY ai-canvas/icons/icon.svg /opt/ai-canvas/icons/icon.svg
+
+RUN chmod +x /opt/ai-canvas/main.py
+
+# Create desktop shortcut for AI Canvas
+RUN echo '[Desktop Entry]
+Name=AI Canvas
+Comment=Full-Featured AI Desktop Application - Chat, Tools, Multiple Models
+Exec=python3 /opt/ai-canvas/main.py
+Icon=ai-canvas
 Terminal=false
 Type=Application
-Categories=Utility;AI;Development;
-Keywords=AI;assistant;chatbot;hermes;helper;
+Categories=Utility;AI;Development;Graphics;
+Keywords=AI;assistant;chatbot;canvas;hermes;helper;tools;
 StartupNotify=true
-StartupWMClass=Hermes' > /usr/share/applications/hermes-ai.desktop
+StartupWMClass=AI Canvas' > /usr/share/applications/ai-canvas.desktop
 
-# Create application icon (simple Hermes logo)
+# Create desktop shortcut for Hermes AI Agent
+RUN echo '[Desktop Entry]
+Name=Hermes AI Agent
+Comment=Built-in Agent Setup & Basic Assistant - Ubuntu XRDP
+Exec=hermes-agent
+Icon=hermes-ai
+Terminal=true
+Type=Application
+Categories=Utility;AI;Development;
+Keywords=AI;agent;setup;helper;
+StartupNotify=true' > /usr/share/applications/hermes-agent.desktop
+
+# ============================================================================
+# ICONS
+# ============================================================================
+
+# Create AI Canvas icon (SVG for multiple sizes)
+RUN echo '<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#58a6ff"/>
+      <stop offset="100%" style="stop-color:#3b82f6"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="40" fill="#0d1117"/>
+  <rect width="256" height="256" rx="40" fill="none" stroke="#30363d" stroke-width="2"/>
+  <circle cx="128" cy="128" r="80" fill="url(#grad)"/>
+  <text x="128" y="155" font-family="Arial, sans-serif" font-size="80" font-weight="bold" fill="white" text-anchor="middle">AI</text>
+  <rect x="80" y="180" width="96" height="4" rx="2" fill="#58a6ff" opacity="0.6"/>
+</svg>' > /usr/share/icons/hicolor/256x256/apps/ai-canvas.svg && \
+    ln -sf /usr/share/icons/hicolor/256x256/apps/ai-canvas.svg /usr/share/icons/hicolor/48x48/apps/ai-canvas.svg
+
+# Create Hermes AI icon
 RUN echo '<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
   <defs>
@@ -96,47 +170,38 @@ RUN echo '<?xml version="1.0" encoding="UTF-8"?>
   </defs>
   <rect width="256" height="256" rx="40" fill="#1a1a2e"/>
   <circle cx="128" cy="128" r="80" fill="url(#grad)"/>
-  <text x="128" y="155" font-family="Arial" font-size="80" font-weight="bold" fill="white" text-anchor="middle">H</text>
+  <text x="128" y="155" font-family="Arial, sans-serif" font-size="80" font-weight="bold" fill="white" text-anchor="middle">H</text>
 </svg>' > /usr/share/icons/hicolor/256x256/apps/hermes-ai.svg && \
-    echo '<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-  <defs>
-    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#667eea"/>
-      <stop offset="100%" style="stop-color:#764ba2"/>
-    </linearGradient>
-  </defs>
-  <circle cx="24" cy="24" r="20" fill="url(#grad)"/>
-  <text x="24" y="30" font-family="Arial" font-size="20" font-weight="bold" fill="white" text-anchor="middle">H</text>
-</svg>' > /usr/share/icons/hicolor/48x48/apps/hermes-ai.png
+    ln -sf /usr/share/icons/hicolor/256x256/apps/hermes-ai.svg /usr/share/icons/hicolor/48x48/apps/hermes-ai.svg
 
 # Update icon cache
 RUN update-icon-caches /usr/share/icons/hicolor/ 2>/dev/null || true
 
-# Create welcome message that shows on first login
+# ============================================================================
+# WELCOME MESSAGE
+# ============================================================================
+
 RUN echo '#!/bin/bash
 echo ""
-echo "╔═══════════════════════════════════════════════════════════╗"
-echo "║                                                           ║"
-echo "║   ✨ Welcome to Ubuntu XRDP with Hermes AI Desktop        ║"
-echo "║                                                           ║"
-echo "║   Launch Hermes AI Desktop:                               ║"
-echo "║   • Click Hermes AI icon in Applications menu            ║"
-echo "║   • Or type in terminal: hermes                          ║"
-echo "║                                                           ║"
-echo "║   First time? Hermes will guide you to set up API key     ║"
-echo "║   for full AI capabilities (required for chat).          ║"
-echo "║                                                           ║"
-echo "║   API Key Guide: https://freemodelsforall.hopto.org/    ║"
-echo "║                                                           ║"
-echo "╚═══════════════════════════════════════════════════════════╝"
+echo "╔════════════════════════════════════════════════════════════════╗"
+echo "║                                                                ║"
+echo "║   ✨ Welcome to Ubuntu XRDP with AI Applications               ║"
+echo "║                                                                ║"
+echo "║   Available Applications:                                      ║"
+echo "║   • AI Canvas - Full AI Desktop (Applications menu)           ║"
+echo "║   • Hermes AI Agent - Simple Setup Agent (Applications menu)  ║"
+echo "║                                                                ║"
+echo "║   Terminal Commands:                                           ║"
+echo "║   • ai-canvas     - Launch AI Canvas GUI                      ║"
+echo "║   • hermes-agent  - Launch Hermes terminal agent              ║"
+echo "║                                                                ║"
+echo "║   AI Canvas Setup:                                             ║"
+echo "║   First launch will guide you to get API key from:            ║"
+echo "║   https://freemodelsforall.hopto.org/                        ║"
+echo "║                                                                ║"
+echo "╚════════════════════════════════════════════════════════════════╝"
 echo ""
 ' > /etc/profile.d/welcome.sh && chmod +x /etc/profile.d/welcome.sh
-
-# Create terminal launcher script
-RUN echo '#!/bin/bash
-python3 /opt/hermes-ai/main.py
-' > /usr/local/bin/hermes && chmod +x /usr/local/bin/hermes
 
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
