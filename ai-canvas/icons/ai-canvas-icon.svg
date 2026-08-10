@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d1117"/>
+      <stop offset="100%" style="stop-color:#161b22"/>
+    </linearGradient>
+    <linearGradient id="canvas-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#58a6ff"/>
+      <stop offset="50%" style="stop-color:#3b82f6"/>
+      <stop offset="100%" style="stop-color:#2563eb"/>
+    </linearGradient>
+    <linearGradient id="accent-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa"/>
+      <stop offset="100%" style="stop-color:#7c3aed"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="512" height="512" rx="80" fill="url(#bg-gradient)"/>
+  <rect width="512" height="512" rx="80" fill="none" stroke="#30363d" stroke-width="3"/>
+  
+  <!-- Digital canvas/palette symbol -->
+  <g transform="translate(256, 200)">
+    <!-- Canvas frame -->
+    <rect x="-80" y="-60" width="160" height="120" rx="8" fill="#1c2128" stroke="url(#canvas-gradient)" stroke-width="3"/>
+    
+    <!-- Canvas content - abstract art -->
+    <rect x="-65" y="-45" width="30" height="30" rx="4" fill="#58a6ff" opacity="0.8"/>
+    <rect x="-25" y="-45" width="30" height="30" rx="4" fill="#3b82f6" opacity="0.8"/>
+    <rect x="15" y="-45" width="30" height="30" rx="4" fill="#a78bfa" opacity="0.8"/>
+    <rect x="-65" y="-5" width="30" height="30" rx="4" fill="#f59e0b" opacity="0.8"/>
+    <rect x="-25" y="-5" width="30" height="30" rx="4" fill="#ef4444" opacity="0.8"/>
+    <rect x="15" y="-5" width="30" height="30" rx="4" fill="#22c55e" opacity="0.8"/>
+    <rect x="-65" y="35" width="30" height="20" rx="4" fill="#ec4899" opacity="0.8"/>
+    <rect x="-25" y="35" width="30" height="20" rx="4" fill="#14b8a6" opacity="0.8"/>
+    <rect x="15" y="35" width="30" height="20" rx="4" fill="#ffffff" opacity="0.3"/>
+    
+    <!-- Sparkles/particles around canvas -->
+    <circle cx="-100" cy="-50" r="4" fill="#58a6ff" filter="url(#glow)"/>
+    <circle cx="100" cy="-30" r="3" fill="#a78bfa" filter="url(#glow)"/>
+    <circle cx="-90" cy="40" r="3" fill="#f59e0b" filter="url(#glow)"/>
+    <circle cx="95" cy="50" r="4" fill="#22c55e" filter="url(#glow)"/>
+    
+    <!-- AI brain icon overlay -->
+    <g transform="translate(0, -10)">
+      <circle cx="0" cy="0" r="25" fill="url(#accent-gradient)" opacity="0.3"/>
+      <path d="M0,-15 L-8,-5 L-3,-8 L0,-3 L3,-8 L8,-5 L0,-15 Z" fill="#a78bfa"/>
+      <circle cx="0" cy="8" r="8" fill="#7c3aed"/>
+      <circle cx="0" cy="8" r="4" fill="#c4b5fd"/>
+    </g>
+  </g>
+  
+  <!-- Text -->
+  <text x="256" y="370" font-family="Arial, sans-serif" font-size="52" font-weight="bold" fill="#ffffff" text-anchor="middle" letter-spacing="3">AI</text>
+  <text x="256" y="410" font-family="Arial, sans-serif" font-size="20" fill="#8b949e" text-anchor="middle" letter-spacing="6">CANVAS</text>
+  
+  <!-- Bottom accent line -->
+  <rect x="156" y="430" width="144" height="3" rx="1.5" fill="url(#canvas-gradient)"/>
+</svg>

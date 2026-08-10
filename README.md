@@ -5,16 +5,17 @@
 [![Docker](https://img.shields.io/badge/Docker-24.0+-blue.svg)](https://docker.com)
 [![Ubuntu](https://img.shields.io/badge/Default-Ubuntu_24.04_LTS-orange.svg)](https://ubuntu.com)
 [![XRDP](https://img.shields.io/badge/XRDP-0.9.x-green.svg)](https://github.com/neutrinolabs/xrdp)
-[![AI Canvas](https://img.shields.io/badge/AI_Canvas-GUI_App-purple.svg)](https://github.com/jjkh1673-tech/ubuntu-xrdp)
+[![AI Canvas](https://img.shields.io/badge/AI_Canvas-GUI_App-blue.svg)](https://github.com/jjkh1673-tech/ubuntu-xrdp)
+[![Hermes AI](https://img.shields.io/badge/Hermes-Agent-Purple.svg)](https://github.com/jjkh1673-tech/ubuntu-xrdp)
 
 ---
 
 ## 🚀 What Is This Project?
 
-This project provides a **Docker container with a full Ubuntu Linux desktop environment** that you can access remotely using Microsoft's Remote Desktop Protocol (RDP). Inside this container, you get **TWO separate AI applications**:
+This project provides a **Docker container with a full Ubuntu Linux desktop environment** that you can access remotely using Microsoft's Remote Desktop Protocol (RDP). Inside this container, you get **TWO separate AI applications** with beautiful icons:
 
-1. **Hermes AI Agent** - Terminal-based agent with icon
-2. **AI Canvas** - Full GUI application with icon
+1. **🟣 Hermes AI Agent** - Terminal-based agent with purple wings icon
+2. **🔵 AI Canvas** - Full GUI application with blue canvas icon
 
 ---
 
@@ -24,7 +25,7 @@ Both applications use the **SAME API key portal**:
 
 ### 🔑 API Key Portal (For BOTH Applications)
 
-**Get your API key from:** https://freemodelsforall.hopto.org/
+**Get your API key from:** **https://freemodelsforall.hopto.org/**
 
 **Instructions:**
 1. Visit https://freemodelsforall.hopto.org/
@@ -34,15 +35,23 @@ Both applications use the **SAME API key portal**:
 
 ---
 
-## 📱 Application 1: Hermes AI Agent
+## 📱 Application 1: 🟣 Hermes AI Agent
 
 ### Overview
 
 **Hermes AI Agent** is a **terminal-based AI agent** with:
-- ✅ **Software Icon** - Visible in Applications menu
+- ✅ **Purple Wings Icon** - Beautiful icon with Hermes logo (wings + caduceus)
 - ✅ **Terminal Mode** - Runs in terminal
 - ✅ **API Key via Environment Variable** - Set during deployment
 - ✅ **First-Run Prompt** - Or pre-configured via build arg
+
+### Icon
+
+The Hermes AI Agent icon features:
+- **Purple gradient background** with wings
+- **Gold caduceus symbol** (Hermes' staff with wings)
+- **White "H" letter** in center
+- **Professional, clean design**
 
 ### How to Set API Key for Hermes
 
@@ -90,26 +99,30 @@ hermes-agent
 
 **From Desktop:**
 - Open Applications menu
-- Click **"Hermes AI Agent"** icon
+- Click **"Hermes AI Agent"** icon (purple wings)
 - Terminal will open with Hermes running
-
-### Hermes AI Agent Icon
-
-Hermes has a **purple "H" icon** visible in Applications menu:
-- Icon location: `/usr/share/icons/hicolor/256x256/apps/hermes-ai.svg`
-- Desktop entry: `/usr/share/applications/hermes-agent.desktop`
 
 ---
 
-## 🎨 Application 2: AI Canvas (Full GUI Application)
+## 🎨 Application 2: 🔵 AI Canvas (Full GUI Application)
 
 ### Overview
 
 **AI Canvas** is a **full-featured GUI application** with:
-- ✅ **Software Icon** - Visible in Applications menu
+- ✅ **Blue Canvas Icon** - Beautiful icon with paint palette + AI brain
 - ✅ **GUI Mode** - Beautiful desktop interface
 - ✅ **API Key via Environment Variable** - Set during deployment
 - ✅ **First-Run Setup Wizard** - Or pre-configured via build arg
+
+### Icon
+
+The AI Canvas icon features:
+- **Dark background** with rounded corners
+- **Blue gradient circle** in center
+- **Paint palette/drawing canvas** with colorful blocks
+- **AI brain symbol** overlay
+- **"AI" text** below
+- **Modern, attractive design**
 
 ### How to Set API Key for AI Canvas
 
@@ -156,14 +169,8 @@ ai-canvas
 
 **From Desktop:**
 - Open Applications menu
-- Click **"AI Canvas"** icon
+- Click **"AI Canvas"** icon (blue canvas)
 - GUI application opens
-
-### AI Canvas Icon
-
-AI Canvas has a **blue "AI" icon** visible in Applications menu:
-- Icon location: `/usr/share/icons/hicolor/256x256/apps/ai-canvas.svg`
-- Desktop entry: `/usr/share/applications/ai-canvas.desktop`
 
 ---
 
@@ -206,17 +213,17 @@ docker run -d -p 3389:3389 -v xrdp-root-home:/root --name xrdp-desktop xrdp
 
 ### Step 6: Launch Applications
 
-**AI Canvas (Full GUI):**
-```bash
-ai-canvas
-```
-Or click "AI Canvas" in Applications menu
-
-**Hermes AI Agent (Terminal):**
+**🟣 Hermes AI Agent (Terminal):**
 ```bash
 hermes-agent
 ```
-Or click "Hermes AI Agent" in Applications menu
+Or click purple "Hermes AI Agent" icon in Applications menu
+
+**🔵 AI Canvas (Full GUI):**
+```bash
+ai-canvas
+```
+Or click blue "AI Canvas" icon in Applications menu
 
 ---
 
@@ -229,13 +236,21 @@ ubuntu-xrdp/
 │
 ├── hermes-ai/              # ← Hermes AI Agent (Terminal App)
 │   ├── main.py             # Terminal agent code
+│   ├── icons/
+│   │   ├── hermes-icon.svg              # Vector icon source
+│   │   ├── hermes-icon-48x48.png        # 48x48 icon
+│   │   ├── hermes-icon-128x128.png      # 128x128 icon
+│   │   └── hermes-icon-256x256.png      # 256x256 icon
 │   └── README.md           # Hermes documentation
 │
 ├── ai-canvas/              # ← AI Canvas (Full GUI App)
 │   ├── main.py             # GUI application code
 │   ├── requirements.txt    # Python dependencies
 │   └── icons/
-│       └── icon.svg        # Application icon
+│       ├── ai-canvas-icon.svg           # Vector icon source
+│       ├── ai-canvas-icon-48x48.png     # 48x48 icon
+│       ├── ai-canvas-icon-128x128.png   # 128x128 icon
+│       └── ai-canvas-icon-256x256.png   # 256x256 icon
 │
 ├── hermes-agent            # ← Terminal launcher (symlink)
 ├── start.sh                # Container startup
@@ -368,13 +383,13 @@ If API key doesn't work:
 
 ## 📋 Summary Comparison
 
-| Feature | Hermes AI Agent | AI Canvas |
+| Feature | 🟣 Hermes AI Agent | 🔵 AI Canvas |
 |---------|----------------|-----------|
 | **Type** | Terminal application | Full GUI application |
 | **Interface** | Command-line in terminal | Beautiful desktop GUI |
+| **Icon** | Purple wings + H | Blue canvas + AI |
 | **API Key Setup** | Build arg OR first-run prompt | Build arg OR first-run wizard |
 | **API Key Portal** | https://freemodelsforall.hopto.org/ | https://freemodelsforall.hopto.org/ |
-| **Icon** | Purple "H" icon | Blue "AI" icon |
 | **Launch Method** | `hermes-agent` or Applications menu | `ai-canvas` or Applications menu |
 | **Running Mode** | Terminal | GUI (desktop window) |
 | **Primary Use** | Setup & basic assistance | Full AI chat with tools |
@@ -383,23 +398,23 @@ If API key doesn't work:
 
 ## 📖 Detailed Instructions
 
-### For Hermes AI Agent:
+### For 🟣 Hermes AI Agent:
 
 1. **Get API key**: Go to https://freemodelsforall.hopto.org/
 2. **Choose setup method**: Build arg OR first-run prompt
 3. **If build arg**: `docker build --build-arg HERMES_API_KEY="key" -t xrdp .`
 4. **If first-run**: Just run `hermes-agent` and enter key when prompted
-5. **Launch**: Type `hermes-agent` or click icon in Applications menu
-6. **Icon**: Purple "H" icon visible in Applications menu
+5. **Launch**: Type `hermes-agent` or click purple icon in Applications menu
+6. **Icon**: Purple wings + caduceus symbol with "H"
 
-### For AI Canvas:
+### For 🔵 AI Canvas:
 
 1. **Get API key**: Go to https://freemodelsforall.hopto.org/
 2. **Choose setup method**: Build arg OR first-run wizard
 3. **If build arg**: `docker build --build-arg HERMES_API_KEY="key" -t xrdp .`
-4. **If first-run**: Click app icon, enter key in welcome screen
-5. **Launch**: Type `ai-canvas` or click icon in Applications menu
-6. **Icon**: Blue "AI" icon visible in Applications menu
+4. **If first-run**: Click blue icon, enter key in welcome screen
+5. **Launch**: Type `ai-canvas` or click blue icon in Applications menu
+6. **Icon**: Blue gradient with paint canvas + AI brain symbol
 
 ---
 
@@ -415,4 +430,4 @@ If API key doesn't work:
 
 ---
 
-> **💡 TIP**: Get your API key from https://freemodelsforall.hopto.org/ first. Then build with `--build-arg HERMES_API_KEY="your-key"` for automatic setup. Both Hermes AI Agent and AI Canvas will work immediately after deployment!
+> **💡 TIP**: Get your API key from https://freemodelsforall.hopto.org/ first. Then build with `--build-arg HERMES_API_KEY="your-key"` for automatic setup. Both 🟣 Hermes AI Agent and 🔵 AI Canvas will work immediately after deployment!

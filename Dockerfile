@@ -9,8 +9,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # ============================================================================
 # API KEY CONFIGURATION (Set during build/deploy time)
 # ============================================================================
-# Hermes AI Agent এর জন্য API কী ডিপ্লয় করার সময় ভ্যারিয়েবল হিসেবে দিন।
-# এই ভ্যারিয়েবলটি Hermes Agent দ্বারা ব্যবহার করা হবে।
+# Hermes AI Agent এবং AI Canvas উভয়ের জন্যই একই API কী ব্যবহার হয়।
 #
 # উদাহরণ:
 #   docker build --build-arg HERMES_API_KEY="আপনার-API-কী-এখানে" -t xrdp .
@@ -116,6 +115,7 @@ RUN mkdir -p /opt/hermes-ai && \
     mkdir -p /opt/ai-canvas/icons && \
     mkdir -p /usr/share/applications && \
     mkdir -p /usr/share/icons/hicolor/48x48/apps && \
+    mkdir -p /usr/share/icons/hicolor/128x128/apps && \
     mkdir -p /usr/share/icons/hicolor/256x256/apps
 
 # ============================================================================
@@ -124,6 +124,12 @@ RUN mkdir -p /opt/hermes-ai && \
 
 COPY hermes-agent /opt/hermes-ai/main.py
 RUN chmod +x /opt/hermes-ai/main.py
+
+# Copy Hermes icons
+COPY hermes-ai/icons/hermes-icon-48x48.png /usr/share/icons/hicolor/48x48/apps/hermes-ai.png
+COPY hermes-ai/icons/hermes-icon-128x128.png /usr/share/icons/hicolor/128x128/apps/hermes-ai.png
+COPY hermes-ai/icons/hermes-icon-256x256.png /usr/share/icons/hicolor/256x256/apps/hermes-ai.png
+RUN ln -sf /usr/share/icons/hicolor/256x256/apps/hermes-ai.png /usr/share/icons/hicolor/48x48/apps/hermes-ai.png
 
 # Create terminal launcher for Hermes AI
 RUN echo '#!/bin/bash
@@ -136,25 +142,14 @@ python3 /opt/hermes-ai/main.py
 
 COPY ai-canvas/main.py /opt/ai-canvas/main.py
 COPY ai-canvas/requirements.txt /opt/ai-canvas/requirements.txt
-COPY ai-canvas/icons/icon.svg /opt/ai-canvas/icons/icon.svg
+COPY ai-canvas/icons/ai-canvas-icon-48x48.png /opt/ai-canvas/icons/ai-canvas-icon.png
+COPY ai-canvas/icons/ai-canvas-icon-128x128.png /usr/share/icons/hicolor/128x128/apps/ai-canvas.png
+COPY ai-canvas/icons/ai-canvas-icon-256x256.png /usr/share/icons/hicolor/256x256/apps/ai-canvas.png
+RUN ln -sf /usr/share/icons/hicolor/256x256/apps/ai-canvas.png /usr/share/icons/hicolor/48x48/apps/ai-canvas.png
 
 RUN chmod +x /opt/ai-canvas/main.py
 
-# Also support AI Canvas via HERMES_API_KEY environment variable
-RUN echo '#!/bin/bash
-# If HERMES_API_KEY is set in environment, use it
-if [ -n "$HERMES_API_KEY" ]; then
-    export API_KEY="$HERMES_API_KEY"
-    export OPENAI_API_KEY="$HERMES_API_KEY"
-fi
-python3 /opt/ai-canvas/main.py
-' > /usr/local/bin/ai-canvas && chmod +x /usr/local/bin/ai-canvas
-
-# ============================================================================
-# DESKTOP SHORTCUTS
-# ============================================================================
-
-# AI Canvas desktop shortcut
+# Create desktop shortcut for AI Canvas
 RUN echo '[Desktop Entry]
 Name=AI Canvas
 Comment=Full-Featured AI Desktop Application - Chat, Tools, Multiple Models
@@ -180,45 +175,6 @@ Keywords=AI;agent;setup;helper;terminal;
 StartupNotify=true' > /usr/share/applications/hermes-agent.desktop
 
 # ============================================================================
-# ICONS
-# ============================================================================
-
-# AI Canvas icon (blue theme)
-RUN echo '<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-  <defs>
-    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#58a6ff"/>
-      <stop offset="100%" style="stop-color:#3b82f6"/>
-    </linearGradient>
-  </defs>
-  <rect width="256" height="256" rx="40" fill="#0d1117"/>
-  <rect width="256" height="256" rx="40" fill="none" stroke="#30363d" stroke-width="2"/>
-  <circle cx="128" cy="128" r="80" fill="url(#grad)"/>
-  <text x="128" y="155" font-family="Arial, sans-serif" font-size="80" font-weight="bold" fill="white" text-anchor="middle">AI</text>
-  <rect x="80" y="180" width="96" height="4" rx="2" fill="#58a6ff" opacity="0.6"/>
-</svg>' > /usr/share/icons/hicolor/256x256/apps/ai-canvas.svg && \
-    ln -sf /usr/share/icons/hicolor/256x256/apps/ai-canvas.svg /usr/share/icons/hicolor/48x48/apps/ai-canvas.svg
-
-# Hermes AI icon (purple theme)
-RUN echo '<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-  <defs>
-    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#667eea"/>
-      <stop offset="100%" style="stop-color:#764ba2"/>
-    </linearGradient>
-  </defs>
-  <rect width="256" height="256" rx="40" fill="#1a1a2e"/>
-  <circle cx="128" cy="128" r="80" fill="url(#grad)"/>
-  <text x="128" y="155" font-family="Arial, sans-serif" font-size="80" font-weight="bold" fill="white" text-anchor="middle">H</text>
-</svg>' > /usr/share/icons/hicolor/256x256/apps/hermes-ai.svg && \
-    ln -sf /usr/share/icons/hicolor/256x256/apps/hermes-ai.svg /usr/share/icons/hicolor/48x48/apps/hermes-ai.svg
-
-# Update icon cache
-RUN update-icon-caches /usr/share/icons/hicolor/ 2>/dev/null || true
-
-# ============================================================================
 # WELCOME MESSAGE
 # ============================================================================
 
@@ -239,14 +195,16 @@ echo "║                                                                ║"
 echo "║   ════════════════════════════════════════════════════════════ ║"
 echo "║                                                                ║"
 echo "║   API KEY INFORMATION:                                         ║"
-echo "║   Both applications use the same API key portal:              ║"
+echo "║   Both applications use the same API key:                     ║"
 echo "║   🔑 https://freemodelsforall.hopto.org/                     ║"
 echo "║                                                                ║"
-echo "║   • For Hermes AI Agent: Set HERMES_API_KEY during build      ║"
-echo "║     or run 'hermes-agent' and enter key on first launch       ║"
+echo "║   • Set HERMES_API_KEY during build for auto-configuration    ║"
+echo "║     docker build --build-arg HERMES_API_KEY=\"your-key\" -t xrdp ║"
 echo "║                                                                ║"
-echo "║   • For AI Canvas: Click app icon, enter key on first launch  ║"
-echo "║     OR set HERMES_API_KEY when running container             ║"
+echo "║   • Or set when running:                                       ║"
+echo "║     docker run -e HERMES_API_KEY=\"your-key\" ...              ║"
+echo "║                                                                ║"
+echo "║   • First launch will guide you if key not provided            ║"
 echo "║                                                                ║"
 echo "╚════════════════════════════════════════════════════════════════╝"
 echo ""
