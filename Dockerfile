@@ -45,6 +45,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     jq \
     htop \
     shellcheck \
+    papirus-icon-theme \
+    yaru-theme-gtk \
     && rm -rf /var/lib/apt/lists/*
 
 # ubuntu:24.04 already ships an `ubuntu` user (uid 1000, /bin/bash, sudo group).
@@ -72,16 +74,30 @@ RUN su - ubuntu -c 'curl -fsSL https://hermes-agent.nousresearch.com/install.sh 
     ln -sf "$HERMES_BIN" /usr/local/bin/ai && \
     printf 'export PATH="/home/ubuntu/.local/bin:$PATH"\n' > /etc/profile.d/hermes.sh
 
+# Modern theme, wallpaper and icons.
+COPY assets/wallpaper.png /usr/share/backgrounds/wallpaper.png
+COPY assets/hermes-ai.png /usr/share/icons/hicolor/256x256/apps/hermes-ai.png
+COPY assets/apply-theme.sh /usr/local/bin/apply-theme.sh
+COPY assets/apply-theme.desktop /etc/xdg/autostart/apply-theme.desktop
+RUN chmod +x /usr/local/bin/apply-theme.sh && \
+    (gtk-update-icon-cache -f /usr/share/icons/hicolor 2>/dev/null || true)
+
 RUN mkdir -p /usr/share/applications && \
     printf '%s\n' \
     '[Desktop Entry]' \
     'Name=Hermes AI' \
     'Comment=Upstream Hermes Agent terminal' \
     'Exec=xfce4-terminal -e hermes' \
+    'Icon=/usr/share/icons/hicolor/256x256/apps/hermes-ai.png' \
     'Terminal=false' \
     'Type=Application' \
     'Categories=Development;Utility;' \
     > /usr/share/applications/hermes-ai.desktop
+
+RUN mkdir -p /home/ubuntu/Desktop && \
+    cp /usr/share/applications/hermes-ai.desktop /home/ubuntu/Desktop/ && \
+    chmod +x /home/ubuntu/Desktop/hermes-ai.desktop && \
+    chown -R ubuntu:ubuntu /home/ubuntu/Desktop
 
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
