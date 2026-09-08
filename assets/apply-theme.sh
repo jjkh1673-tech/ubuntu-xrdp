@@ -14,4 +14,7 @@ done
 xfdesktop --reload 2>/dev/null
 # Reference-desktop style: dock on the left (plank reads gsettings/dconf).
 gsettings set "net.launchpad.plank.dock.settings:/net/launchpad/plank/docks/dock1/" position left 2>/dev/null
+# Remove the default bottom panel so the layout matches the reference (left dock only).
+xfconf-query -c xfce4-panel -p /panels/panel-2 -Rr --force 2>/dev/null
+xfce4-panel -r 2>/dev/null
 exit 0

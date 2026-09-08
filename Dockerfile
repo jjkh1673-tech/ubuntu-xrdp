@@ -96,6 +96,9 @@ COPY assets/hermes-desktop-launch /usr/local/bin/hermes-desktop-launch
 COPY assets/plank.desktop /etc/xdg/autostart/plank.desktop
 COPY assets/xclock.desktop /etc/xdg/autostart/xclock.desktop
 COPY assets/hermes.dockitem /home/ubuntu/.config/plank/dock1/launchers/hermes.dockitem
+COPY assets/thunar.dockitem /home/ubuntu/.config/plank/dock1/launchers/thunar.dockitem
+COPY assets/xfce4-terminal.dockitem /home/ubuntu/.config/plank/dock1/launchers/xfce4-terminal.dockitem
+COPY assets/xfce4-appfinder.dockitem /home/ubuntu/.config/plank/dock1/launchers/xfce4-appfinder.dockitem
 RUN chmod +x /usr/local/bin/hermes-desktop-launch && \
     chown -R ubuntu:ubuntu /home/ubuntu/.config
 
