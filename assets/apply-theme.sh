@@ -12,4 +12,6 @@ for m in "$MON" 0 Virtual1 rdp0; do
   xfconf-query -c xfce4-desktop -p "$P/color-style" -t int    -s 0 --create 2>/dev/null
 done
 xfdesktop --reload 2>/dev/null
+# Reference-desktop style: dock on the left (plank reads gsettings/dconf).
+gsettings set "net.launchpad.plank.dock.settings:/net/launchpad/plank/docks/dock1/" position left 2>/dev/null
 exit 0
