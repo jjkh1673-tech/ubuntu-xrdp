@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     sudo \
     xrdp \
+    xorgxrdp \
     xfce4 \
     xfce4-goodies \
     xorg \
@@ -20,8 +21,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
     python3-pip \
     python3-venv \
+    python3-dev \
     python3-tk \
     build-essential \
+    cmake \
+    gdb \
     nodejs \
     npm \
     ripgrep \
@@ -32,10 +36,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     net-tools \
     iproute2 \
     dnsutils \
+    tcpdump \
+    nmap \
     procps \
     openssh-client \
     unzip \
     zip \
+    jq \
+    htop \
+    shellcheck \
     && rm -rf /var/lib/apt/lists/*
 
 # ubuntu:24.04 already ships an `ubuntu` user (uid 1000, /bin/bash, sudo group).
