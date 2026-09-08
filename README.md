@@ -189,7 +189,7 @@ Verified on a 4 vCPU / 16 GB GitHub Codespace with Docker 29.7.2.
 | Healthcheck (`xrdp` + `xrdp-sesman`) | PASS - reports `healthy` |
 | XRDP listening on TCP 3389 | PASS |
 | RDP negotiation + TLS handshake | PASS - `PROTOCOL_SSL`, TLSv1.3 |
-| Real RDP client session (`xfreerdp`) | see below |
+| Real RDP client session (`xfreerdp`) | PASS - logged in as ubuntu, XFCE desktop rendered and captured |
 | XFCE session (headless Xvfb) | PASS - `xfce4-session`, `xfwm4`, `xfce4-panel` |
 | `ai`, `hermes`, `hermes-ai`, `hermes-agent` | PASS - all launch the real runtime |
 | `hermes --version` | PASS - Hermes Agent v0.21.1 |
