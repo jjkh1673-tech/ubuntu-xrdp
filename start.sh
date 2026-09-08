@@ -12,8 +12,12 @@ fi
 
 service dbus start
 
-# PulseAudio is optional for headless/container operation. Do not fail startup if it cannot run system-wide.
-pulseaudio --system --disallow-exit --disable-shm >/var/log/pulseaudio.log 2>&1 || true
+# PulseAudio is optional and must not block startup, so it is daemonized.
+pulseaudio --system --disallow-exit --disable-shm --daemonize=yes >/var/log/pulseaudio.log 2>&1 || true
+
+# A container restart keeps the old pid files while the processes are gone,
+# which makes the xrdp init script refuse to start.
+rm -f /var/run/xrdp/xrdp.pid /var/run/xrdp/xrdp-sesman.pid
 
 service xrdp start
 

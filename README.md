@@ -10,7 +10,7 @@ A clean Ubuntu 24.04 LTS Docker desktop for remote development over XRDP, with t
 - Git, OpenSSH client, build-essential and common developer utilities
 - Node.js/npm, ripgrep and ffmpeg
 - Upstream [Nous Research Hermes Agent](https://github.com/NousResearch/hermes-agent)
-- `hermes`, `hermes-ai`, and `hermes-agent` commands pointing to the same real Hermes runtime
+- `ai`, `hermes`, `hermes-ai`, and `hermes-agent` commands pointing to the same real Hermes runtime
 
 **AI Canvas is intentionally removed.** It is obsolete and is not part of this project.
 
@@ -52,7 +52,7 @@ hermes setup
 hermes doctor
 ```
 
-`hermes-ai` and `hermes-agent` are compatibility aliases for `hermes`.
+`ai`, `hermes-ai`, and `hermes-agent` are compatibility aliases for `hermes`.
 
 On first use, configure a supported provider with `hermes model` or run `hermes setup`. OAuth and other provider credentials remain in the user's Hermes configuration rather than in this repository or Docker build arguments.
 
@@ -97,4 +97,19 @@ This repository is intentionally focused on a maintainable Ubuntu development wo
 
 ## Verification status
 
-The repository changes can be inspected through GitHub. Docker build, container startup, and an actual RDP client session require a runtime host and are not claimed as verified until they have actually run. The CI build workflow is intended to provide repeatable Docker-build verification.
+Verified on a 4 vCPU / 16 GB GitHub Codespace with Docker 29.7.2:
+
+| Check | Result |
+| --- | --- |
+| `docker build` | PASS |
+| Container starts and stays up | PASS |
+| Healthcheck (`xrdp` + `xrdp-sesman`) | PASS - reports `healthy` |
+| XRDP listening on TCP 3389 | PASS |
+| RDP negotiation + TLS handshake | PASS - `PROTOCOL_SSL`, TLSv1.3, 764-byte certificate |
+| XFCE session (headless Xvfb) | PASS - `xfce4-session`, `xfwm4`, `xfce4-panel` |
+| `hermes --version` | PASS - Hermes Agent v0.21.1 |
+| `ai`, `hermes-ai`, `hermes-agent` | PASS - all resolve to the real Hermes runtime |
+| `docker restart` persistence | PASS - returns to `healthy` |
+| Secret scan (repository + image layers) | PASS - no credentials found |
+
+Not verified: an interactive login from a real RDP client, and a live model-provider request, which needs the user's own credentials.

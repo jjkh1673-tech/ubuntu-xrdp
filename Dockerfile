@@ -38,8 +38,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     zip \
     && rm -rf /var/lib/apt/lists/*
 
-RUN useradd -m -s /bin/bash ubuntu && \
-    usermod -aG sudo,ssl-cert ubuntu && \
+# ubuntu:24.04 already ships an `ubuntu` user (uid 1000, /bin/bash, sudo group).
+# The xrdp daemon runs as the `xrdp` user and must read the TLS private key,
+# which requires membership in the ssl-cert group.
+RUN usermod -aG ssl-cert xrdp && \
     echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/ubuntu && \
     chmod 0440 /etc/sudoers.d/ubuntu
 
@@ -58,6 +60,7 @@ RUN su - ubuntu -c 'curl -fsSL https://hermes-agent.nousresearch.com/install.sh 
     ln -sf "$HERMES_BIN" /usr/local/bin/hermes && \
     ln -sf "$HERMES_BIN" /usr/local/bin/hermes-ai && \
     ln -sf "$HERMES_BIN" /usr/local/bin/hermes-agent && \
+    ln -sf "$HERMES_BIN" /usr/local/bin/ai && \
     printf 'export PATH="/home/ubuntu/.local/bin:$PATH"\n' > /etc/profile.d/hermes.sh
 
 RUN mkdir -p /usr/share/applications && \
