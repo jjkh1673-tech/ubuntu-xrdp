@@ -200,3 +200,10 @@ Verified on a 4 vCPU / 16 GB GitHub Codespace with Docker 29.7.2.
 | Secret scan (repository + image layers) | PASS - no credentials found |
 
 Not verified: a live model-provider request, which needs your own credentials.
+
+## Hermes Desktop (GUI)
+
+Bundles the Electron **Hermes Desktop** app (fork: `jjkh1673-tech/hermes-desktop`, upstream `sir1st/hermes-desktop`)
+with a desktop launcher icon (image-2). The CLI agent remains available as `hermes`.
+The desktop ships a left-side Plank dock, an analog clock widget, and the anime wallpaper (image-1)
+to match the reference look across both repos.
