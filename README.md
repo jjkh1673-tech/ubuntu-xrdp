@@ -190,18 +190,19 @@ Hermes integration. It does not bundle Kali/BlackArch or bulk security tooling.
 ## Verification status
 
 Verified on a GitHub Codespace (`standardLinux32gb`: 4 vCPU, 16 GB RAM, root through
-passwordless sudo) with Docker 29.7.2, building `main` at 4f7828a into an empty image store.
+passwordless sudo) with Docker 29.7.2, building `main` at 37df461 into an empty image store
+after `docker system prune -af`, so nothing was inherited from an earlier build.
 
 | Check | Result |
 | --- | --- |
-| `docker build` from scratch | PASS - exit 0, image 7.14 GB |
-| GitHub Actions CI build | PASS - run #17 on the same commit |
+| `docker build` from scratch | PASS - exit 0, image 7.09 GB |
+| GitHub Actions CI build | PASS - run #18 on the same commit |
 | Container starts and stays up | PASS - `healthy`, restart count 0 |
 | Healthcheck (`xrdp` + `xrdp-sesman`) | PASS - both processes running, TCP 3389 listening |
 | Real RDP login as `ubuntu` | PASS - username and password typed into the XRDP login window through an `xfreerdp` client session; server log: `login successful for user ubuntu on display 10` |
 | XFCE session after login | PASS - session, window manager, panel and Plank all start; no black screen, no disconnect |
 | Desktop layout | PASS - single top panel, left Plank dock with Hermes Desktop / files / terminal / app finder, frameless analog clock widget, no home/filesystem/trash icons |
-| Root access for the RDP user | PASS - `sudo -i` from that session gives `uid=0(root)`; `sudo -l` shows `(ALL) NOPASSWD: ALL`, `/etc/sudoers.d/ubuntu` is `0440` |
+| Root access for the RDP user | PASS - `whoami`, `sudo -i`, `id`, `nproc`, `free -g` and `apt-get -s upgrade` typed into a terminal inside the RDP session (`uid=0(root)`, 4 CPUs, 15 GB); `sudo -l` shows `(ALL) NOPASSWD: ALL`, `/etc/sudoers.d/ubuntu` is `0440` |
 | Image is already patched | PASS - `apt-get update && apt-get -s upgrade` inside the container reports `0 upgraded`; base is Ubuntu 24.04.5 LTS |
 | Hermes CLI | PASS - `hermes --version` -> `Hermes Agent v0.21.1 (2026.9.7)`; `ai` opens the real agent prompt (19 tools, skill list, `/help`) |
 | Hermes Desktop app | PASS - `/usr/local/bin/hermes-desktop-launch` opens the app window inside the RDP session (`Web UI v0.6.7`) |
