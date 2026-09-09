@@ -84,6 +84,36 @@ COPY assets/apply-theme.desktop /etc/xdg/autostart/apply-theme.desktop
 RUN chmod +x /usr/local/bin/apply-theme.sh && \
     (gtk-update-icon-cache -f /usr/share/icons/hicolor 2>/dev/null || true)
 
+# Reference layout keeps only the top panel: strip the default bottom panel
+# (panel-2 + its plugins 15-22) from the system default, so fresh sessions never
+# create it. Deleting it at runtime and restarting the panel leaves a zombie
+# window, because the running panel keeps a cached panel-2.
+RUN python3 - <<'EOF'
+import xml.etree.ElementTree as ET
+p = '/etc/xdg/xfce4/panel/default.xml'
+t = ET.parse(p)
+r = t.getroot()
+for prop in r.iter('property'):
+    if prop.get('name') == 'panels':
+        for child in list(prop):
+            if child.tag == 'value' and child.get('value') == '2':
+                prop.remove(child)
+            if child.tag == 'property' and child.get('name') == 'panel-2':
+                prop.remove(child)
+    if prop.get('name') == 'plugins':
+        for child in list(prop):
+            n = child.get('name') or ''
+            if n.startswith('plugin-'):
+                try:
+                    i = int(n.split('-')[1])
+                except ValueError:
+                    continue
+                if 15 <= i <= 22:
+                    prop.remove(child)
+t.write(p, encoding='unicode', xml_declaration=True)
+print('panel-2 stripped from default.xml')
+EOF
+
 # Hermes Desktop GUI app (Electron). Fork: jjkh1673-tech/hermes-desktop (upstream sir1st/hermes-desktop).
 RUN curl -fsSL -o /tmp/hermes-desktop.deb https://github.com/sir1st/hermes-desktop/releases/download/v0.1.10/Hermes.Desktop-0.1.10-amd64.deb && \
     apt-get update && \
