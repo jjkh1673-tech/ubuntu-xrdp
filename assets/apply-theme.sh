@@ -25,15 +25,15 @@ if xfconf-query -c xfce4-panel -p /panels/panel-2 >/dev/null 2>&1; then
   sleep 2
   (nohup xfce4-panel >/dev/null 2>&1 &)
 fi
-# --- DESKTOP CLOCK WIDGET ---------------------------------------------
-# Analog clock on the wallpaper (reference look), frameless and out of the
-# taskbar: Motif hints drop the title bar, the state atoms keep it sticky,
-# below normal windows and absent from the pager/taskbar.
+# --- DESKTOP CLOCK WIDGET -------------------------------------------------------
+# Analog clock sitting on the wallpaper (reference layout). xclock cannot drop its
+# own frame, so once the window appears the Motif hint removes the title bar and the
+# state atoms keep it sticky, below normal windows and out of the taskbar/pager.
 pkill -x xclock 2>/dev/null
-( xclock -analog -update 1 -norepeat -background white -foreground black \
-    -hd black -hl black -bd white -geometry 160x160+170+75 & )
-for i in $(seq 1 30); do
-  WID=$(xdotool search --class xclock 2>/dev/null | head -1)
+( setsid xclock -analog -padding 1 -update 1 -background white -foreground black \
+    -hd black -hl black -bd white -geometry 150x150+120+45 >/dev/null 2>&1 & )
+for i in $(seq 1 20); do
+  WID=$(xdotool search --name xclock 2>/dev/null | head -1)
   [ -n "$WID" ] && break
   sleep 0.5
 done
@@ -42,13 +42,11 @@ if [ -n "$WID" ]; then
   xprop -id "$WID" -f _NET_WM_STATE 32a -set _NET_WM_STATE \
     _NET_WM_STATE_SKIP_TASKBAR,_NET_WM_STATE_SKIP_PAGER,_NET_WM_STATE_STICKY,_NET_WM_STATE_BELOW 2>/dev/null
 fi
-# Only the Desktop folder stays on the wallpaper (it holds the Hermes launcher);
-# the home/filesystem/trash icons are XFCE defaults that make the desktop look cluttered.
-for k in show-home show-filesystem show-trash show-network; do
+# The desktop keeps only the Desktop folder (it holds the Hermes launcher); the
+# home/filesystem/trash shortcuts are XFCE defaults that just clutter the wallpaper.
+for k in show-home show-filesystem show-trash; do
   xfconf-query -c xfce4-desktop -p "/desktop-icons/file-icons/$k" -t bool -s false --create 2>/dev/null
 done
-# Dock proportions closer to the reference than plank's default 48px, and a
-# slimmer dock leaves the wallpaper readable.
+# Slimmer dock than plank's 48px default, matching the reference proportions.
 gsettings set "net.launchpad.plank.dock.settings:/net/launchpad/plank/docks/dock1/" icon-size 40 2>/dev/null
-
 exit 0
