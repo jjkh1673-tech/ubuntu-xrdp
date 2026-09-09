@@ -3,6 +3,12 @@
 An Ubuntu 24.04 LTS Docker container with a graphical XFCE desktop over RDP, developer
 tooling, and the upstream Hermes AI agent in the terminal.
 
+## Desktop preview
+
+What you see when you connect over RDP (real `xfreerdp` session, 1280x800):
+
+![Ubuntu XRDP desktop: classic dark wallpaper, top panel, left Plank dock, analog clock, Hermes Desktop icon](assets/preview.png)
+
 ## Prerequisites
 
 Docker, installed and running. Check:
