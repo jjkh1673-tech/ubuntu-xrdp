@@ -71,6 +71,8 @@ RUN apt-get update && \
     mate-calc \
     engrampa \
     ristretto \
+    mousepad \
+    xfce4-screenshooter \
     xfce4-taskmanager \
     papirus-icon-theme \
     yaru-theme-gtk \

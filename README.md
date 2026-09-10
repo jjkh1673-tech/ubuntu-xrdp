@@ -1,225 +1,223 @@
-# Ubuntu 24.04 XRDP Development Desktop
+# Ubuntu XRDP desktop (XFCE) with the Hermes Agent
 
-An Ubuntu 24.04 LTS Docker container with a graphical XFCE desktop over RDP, developer
-tooling, and the upstream Hermes AI agent in the terminal.
+A Docker image of a complete Ubuntu 26.04 LTS desktop that you open with any RDP client. It is
+not a demo: after the container starts you get a normal XFCE desktop, a terminal, root through
+`sudo`, everyday applications, and the upstream [Hermes Agent](https://hermes-agent.nousresearch.com)
+already installed. The system is patched during the build, so you never have to run an update
+before working, and a `System Upgrade` tool tells you when a newer Ubuntu LTS exists and moves you
+to it without touching your files.
+
+Who it is for: someone who wants a Linux desktop and a coding environment on any machine (Windows,
+macOS, Chromebook, an old laptop) without installing Linux on it, and who wants an AI agent that can
+actually run commands in that desktop.
 
 ## Desktop preview
 
 What a user sees after connecting over RDP, captured in a real `xfreerdp` session logged in as
 `ubuntu` (1280x800, first login, nothing hand-edited afterwards):
 
-![Ubuntu XRDP desktop: classic dark wallpaper, single top panel, left Plank dock, frameless analog clock widget, Hermes Desktop icon on the desktop](assets/preview.png)
+![Ubuntu XRDP desktop: classic dark wallpaper, single top panel, left Plank dock with Hermes Desktop, Files, terminal, app finder and System Upgrade, Hermes Desktop icon on the desktop](assets/preview.png)
 
-The layout is the reference look: analog clock widget on the wallpaper, Plank dock with Hermes
-Desktop, file manager, terminal and app finder on the left, one top panel (no bottom bar).
+## What is inside
 
-## Prerequisites
+| Part | Detail |
+| --- | --- |
+| Base | Ubuntu 26.04 LTS (resolute), every update applied at build time |
+| Desktop | XFCE 4.20 over xrdp 0.10, single top panel, left dock (Plank) |
+| User | `ubuntu` (uid 1000), passwordless `sudo`, RDP login |
+| Terminals & editors | xfce4-terminal (dark palette, 10k scrollback), mousepad, `vim`, `nano` |
+| Everyday apps | Thunar (files), mousepad (text editor), ristretto (images), engrampa (archives), mate-calc, xfce4-screenshooter, xfce4-taskmanager, htop |
+| Development | git, curl, wget, jq, python3 (+venv/pip/tk), nodejs, npm, build-essential, cmake, gdb, ripgrep, shellcheck, openssh-client, nmap, tcpdump, dnsutils |
+| AI | Hermes Agent installed by its own installer, plus `ai`, `hermes`, `hermes-agent`, `hermes-ai` commands and the `hermes desktop` GUI |
+| Upgrades | `ubuntu-migrate` command, a `System Upgrade` entry in the menu and dock, and a login notice when a newer Ubuntu LTS exists |
+| Ports | 3389/tcp (RDP) |
 
-Docker, installed and running. Check:
+Nothing is faked or stubbed: no wrapper scripts pretending to be the agent, no half-configured
+services. `docker exec` in and everything behaves like the upstream tool.
 
-```bash
-docker --version
-docker info >/dev/null && echo "Docker is working"
-```
+## Requirements
 
-If the second line errors, start Docker Desktop (Windows/macOS) or run
-`sudo systemctl start docker` (Linux), then check again.
+- Docker installed and running (`docker --version` and `docker info >/dev/null && echo ok`).
+- About 10 GB free disk for the image, 4 GB RAM for the desktop.
+- An RDP client: `Remmina` or `mstsc` (Windows), `Microsoft Remote Desktop` (macOS), `xfreerdp` (Linux).
 
-You also need about 7 GB of free disk space.
-
-## Quick start
-
-Run these one at a time.
-
-**1. Build** (roughly 8 minutes the first time):
+## Run it
 
 ```bash
 git clone https://github.com/jjkh1673-tech/ubuntu-xrdp.git
 cd ubuntu-xrdp
 docker build -t ubuntu-xrdp .
-```
-
-**2. Start.** Replace `choose-a-strong-password` with your own. Skipping this is the most
-common mistake: without it you cannot log in.
-
-```bash
-docker run -d \
-  --name ubuntu-xrdp \
-  -p 3389:3389 \
-  -e XRDP_PASSWORD='choose-a-strong-password' \
+docker run -d --name ubuntu-xrdp -p 3389:3389 \
   -v ubuntu-xrdp-home:/home/ubuntu \
   ubuntu-xrdp
+docker logs -f ubuntu-xrdp      # stop with Ctrl-C once it says the desktop is ready
 ```
 
-**3. Wait ~30 seconds**, then check:
+Then point an RDP client at `localhost` (port 3389) and log in:
+
+```
+user: ubuntu
+password: 1122
+```
+
+The `-v ubuntu-xrdp-home:/home/ubuntu` part is what keeps your files, shell history and Hermes
+memory when you delete and recreate the container. Add it always.
+
+To pull a prebuilt image instead of building:
 
 ```bash
-docker inspect --format '{{.State.Health.Status}}' ubuntu-xrdp
+docker pull ghcr.io/jjkh1673-tech/ubuntu-xrdp:latest
+docker run -d --name ubuntu-xrdp -p 3389:3389 -v ubuntu-xrdp-home:/home/ubuntu ghcr.io/jjkh1673-tech/ubuntu-xrdp:latest
 ```
 
-Wait until it prints `healthy`. The desktop takes a few seconds to come up.
+### First login: change the password
 
-**4. Connect** with any RDP client:
-
-| Where Docker runs | Address |
-| --- | --- |
-| Your own computer | `localhost:3389` |
-| Another machine | `<that machine's IP>:3389` |
-
-Username `ubuntu`, password from step 2.
-
-Clients: Remmina (Linux), Remote Desktop Connection (Windows), Microsoft Remote Desktop
-(macOS).
-
-The container uses a self-signed certificate, so the client warns on first connect. That
-is expected — accept it.
-
-## Using the AI agent
-
-Open a terminal in the desktop, or run `docker exec -it ubuntu-xrdp bash`, then:
+The image ships with the documented default password `1122` so that a personal machine or your own
+codespace just works. On anything reachable from outside, change it before you connect anything else:
 
 ```bash
-ai
+docker exec -it ubuntu-xrdp su - ubuntu -c 'passwd'        # inside the container
+# or set your own at start-up:
+docker run -d --name ubuntu-xrdp -p 3389:3389 -e XRDP_PASSWORD='Y0uRs3cret!' ubuntu-xrdp
+# or from inside the desktop: open a terminal and run  passwd
 ```
 
-`ai`, `hermes`, `hermes-ai` and `hermes-agent` all launch the same real Hermes agent.
+The first login also shows a welcome bubble with the same reminder.
 
-On first run no provider is configured. Set one up:
+### Connecting from another machine
+
+Replace `localhost` with the host's address. Same credentials. If you expose 3389 to the internet,
+change the password first and consider a VPN or an SSH tunnel:
 
 ```bash
-hermes setup
+ssh -N -L 3389:localhost:3389 you@that-host      # then connect to localhost:3389
 ```
 
-Credentials go to `~/.hermes/.env` with `600` permissions. They are never written into the
-image, and `hermes status` displays them masked.
+### Using a GitHub Codespace instead of your own machine
 
-## What is included
+1. In this repository open **Codepaces → New codespace** (the default 4 vCPU / 16 GB machine is
+   what this image was built and verified on).
+2. In the codespace terminal run the two `docker` commands from *Run it* above.
+3. Open the **Ports** tab, find `3389`, and set *Port visibility* to **Public** if you want to reach
+   it from another machine without a tunnel. Codespace ports are forwarded over HTTPS, so an RDP
+   client must go through a tunnel instead:
+   ```bash
+   gh codespace ssh -c <codespace-name> -- -L 3389:localhost:3389
+   ```
+   then connect an RDP client to `localhost:3389`.
+4. Your codespace is private to you even though this repository is public; nothing is shared with
+   anyone else unless you hand out the address and the password.
 
-- Ubuntu 24.04 LTS with an XFCE desktop over XRDP on TCP 3389
-- Python 3 with pip, venv and development headers
-- C/C++ via build-essential and cmake, with gdb for debugging
-- Node.js and npm
-- Git, OpenSSH client, ripgrep, jq, shellcheck, htop
-- Network and security tools: net-tools, iproute2, dnsutils, tcpdump, nmap
-- ffmpeg
-- Upstream [Nous Research Hermes Agent](https://github.com/NousResearch/hermes-agent)
+## Root
 
-**AI Canvas is intentionally removed.** It is obsolete and is not part of this project.
-
-Data-science and ML libraries are deliberately left to `pip` inside a virtualenv, so the
-image stays maintainable:
+The `ubuntu` user has full root with no password:
 
 ```bash
-python3 -m venv ~/venv && source ~/venv/bin/activate
-pip install numpy pandas scikit-learn
+sudo -i        # uid=0(root)
 ```
 
-## Persistence
+Use it for packages, services and system files. It is deliberate, because the whole desktop is
+already isolated in a container.
 
-The `-v ubuntu-xrdp-home:/home/ubuntu` volume in step 2 keeps your shell configuration and
-Hermes credentials when the container is recreated. Without it they survive
-`docker restart` but are lost if you remove the container.
+## Hermes in the terminal
 
-## Useful commands
+The agent is installed the way its documentation says, for the `ubuntu` user, from
+`https://hermes-agent.nousresearch.com/install.sh`. Its home is `~/.hermes` - inside the volume, so
+it survives rebuilds.
 
 ```bash
-docker exec -it ubuntu-xrdp bash          # shell inside the container
-docker exec ubuntu-xrdp pgrep -a xrdp     # is XRDP running?
-docker logs ubuntu-xrdp                   # startup log
-docker restart ubuntu-xrdp                # restart
-docker stop ubuntu-xrdp                   # stop
-docker rm -f ubuntu-xrdp                  # remove (volume is kept)
+ai                # or: hermes
+hermes setup      # first run: pick a provider, paste the API key
+hermes status
+hermes doctor
 ```
+
+No API key is baked into the image, and no wrapper replaces the real CLI - `ai` and `hermes` are the
+same binary, so every upstream command and capability is available.
+
+## Hermes Desktop
+
+`hermes desktop` is the upstream app for this agent, so that is what is used here - it is compiled
+into the image at build time and launched by:
+
+- the **Hermes Desktop** icon on the desktop,
+- the **Hermes** icon in the left dock,
+- the `Hermes Desktop` entry in the Applications menu,
+- `/usr/local/bin/hermes-desktop-launch` from a terminal.
+
+It shares the same `~/.hermes` state as the terminal, so a chat you started in the terminal is where
+you left it in the app. If you build a custom image without network access, the pre-build is
+skipped with a warning and the first launch compiles it (a few minutes, once).
+
+## Staying up to date
+
+The image is fully patched at build time, so right after a fresh start there is nothing to install:
+
+```bash
+sudo apt-get update -qq && apt-get -s upgrade | tail -1     # 0 upgraded
+```
+
+For the desktop itself there is `ubuntu-migrate` (the **System Upgrade** icon in the dock and menu):
+
+```bash
+ubuntu-migrate --check              # current Ubuntu, newest LTS, exit code says if a move is due
+ubuntu-migrate --plan               # the exact docker commands that swap the image, keeping the volume
+ubuntu-migrate --apply              # refresh packages inside the running container (root)
+ubuntu-migrate --migrate-lts        # Ubuntu's own do-release-upgrade, if you prefer in-place
+ubuntu-migrate notifications off    # stop the login notice; 'on' turns it back
+```
+
+Once per release you get a notification when a newer LTS exists. It never installs anything on its
+own. Because your `/home/ubuntu` is a volume, `--plan` is the safe path: pull the new image, recreate
+the container, and every file, setting and Hermes state comes with you unchanged.
+
+## Repository layout
+
+```
+Dockerfile                  the image: Ubuntu 26.04 + XFCE + xrdp + tooling + Hermes
+start.sh                    container entrypoint: dbus, audio, xrdp, then tails the RDP log
+assets/apply-theme.sh       per-login session look (theme, icons, wallpaper, dock position)
+assets/*.desktop            autostart entries: theme, plank, welcome notice, upgrade notice
+assets/*.dockitem           what the left dock pins
+assets/xfce4-terminal.xml   terminal colours, font and scrollback defaults
+assets/ubuntu-migrate       the System Upgrade tool
+assets/hermes-desktop-launch  launches `hermes desktop`
+assets/wallpaper.png        the desktop background
+.github/workflows/ci.yml    builds the image on every push
+```
+
+## Customising
+
+- Wallpaper: replace `assets/wallpaper.png` and rebuild; the session script points at it.
+- Dock: edit the `assets/*.dockitem` files - one line each, pointing at a `.desktop` file.
+- More packages: add them to the `apt-get install` list in the Dockerfile.
+- No clock widget: the desktop is deliberately plain; the panel keeps the stock XFCE clock.
 
 ## Troubleshooting
 
-**Cannot log in over RDP.** `XRDP_PASSWORD` is applied only when the container starts. If
-it was missing, the log shows:
-
-```text
-WARNING: XRDP_PASSWORD is not set; the ubuntu account cannot be used for password login.
-```
-
-Recreate the container with `-e XRDP_PASSWORD=...`. Changing it on a running container
-does nothing.
-
-**Status is `starting`, not `healthy`.** Normal for the first ~30 seconds. If it stays
-`unhealthy`:
-
-```bash
-docker logs ubuntu-xrdp
-docker exec ubuntu-xrdp pgrep -a xrdp
-docker exec ubuntu-xrdp pgrep -a xrdp-sesman
-```
-
-Both `xrdp` and `xrdp-sesman` must be running for the healthcheck to pass.
-
-**Connection refused on 3389.** Confirm the port is published with `docker ps`, then:
-
-```bash
-docker exec ubuntu-xrdp ss -ltn
-```
-
-**Black or frozen desktop on first login.** Close the client and reconnect; the first
-session initialises the XFCE profile and can take a few seconds.
-
-**Hermes says no provider is configured.** Expected on a fresh container. Run
-`hermes setup`.
-
-## Known limitations
-
-- The TLS certificate is self-signed, so RDP clients warn on first connect.
-- The image is around 7 GB; it bundles a desktop environment and a full build toolchain.
-- No GPU acceleration. CUDA workloads need extra configuration.
-- The `gh` CLI is not bundled, because it requires a third-party apt repository. Install
-  it on demand if you need it.
-- Hermes configuration lives in `/home/ubuntu`; see Persistence.
-
-## Security notes
-
-- Do not commit API keys, OAuth tokens, passwords or `.env` files.
-- Do not use Docker `ARG`/`ENV` to bake provider secrets into image layers.
-- Set `XRDP_PASSWORD` at runtime and use a strong value.
-- Configure Hermes providers through `hermes setup`, not through build arguments.
-
-## Scope
-
-A maintainable Ubuntu development workstation: XRDP desktop, developer tooling, and a real
-Hermes integration. It does not bundle Kali/BlackArch or bulk security tooling.
-
-## Verification status
-
-Verified on a GitHub Codespace (`standardLinux32gb`: 4 vCPU, 16 GB RAM, root through
-passwordless sudo) with Docker 29.7.2, building `main` at 37df461 into an empty image store
-after `docker system prune -af`, so nothing was inherited from an earlier build.
-
-| Check | Result |
+| Symptom | Fix |
 | --- | --- |
-| `docker build` from scratch | PASS - exit 0, image 7.09 GB |
-| GitHub Actions CI build | PASS - run #18 on the same commit |
-| Container starts and stays up | PASS - `healthy`, restart count 0 |
-| Healthcheck (`xrdp` + `xrdp-sesman`) | PASS - both processes running, TCP 3389 listening |
-| Real RDP login as `ubuntu` | PASS - username and password typed into the XRDP login window through an `xfreerdp` client session; server log: `login successful for user ubuntu on display 10` |
-| XFCE session after login | PASS - session, window manager, panel and Plank all start; no black screen, no disconnect |
-| Desktop layout | PASS - single top panel, left Plank dock with Hermes Desktop / files / terminal / app finder, frameless analog clock widget, no home/filesystem/trash icons |
-| Root access for the RDP user | PASS - `whoami`, `sudo -i`, `id`, `nproc`, `free -g` and `apt-get -s upgrade` typed into a terminal inside the RDP session (`uid=0(root)`, 4 CPUs, 15 GB); `sudo -l` shows `(ALL) NOPASSWD: ALL`, `/etc/sudoers.d/ubuntu` is `0440` |
-| Image is already patched | PASS - `apt-get update && apt-get -s upgrade` inside the container reports `0 upgraded`; base is Ubuntu 24.04.5 LTS |
-| Hermes CLI | PASS - `hermes --version` -> `Hermes Agent v0.21.1 (2026.9.7)`; `ai` opens the real agent prompt (19 tools, skill list, `/help`) |
-| Hermes Desktop app | PASS - `/usr/local/bin/hermes-desktop-launch` opens the app window inside the RDP session (`Web UI v0.6.7`) |
-| First-run state | PASS - `hermes status` and `hermes doctor` run; no provider configured; `~/.hermes/.env` is `600` and owned by `ubuntu`, never baked into an image layer |
-| Persistence (the `-v ...:/home/ubuntu` volume) | PASS - a file written in the session survived `docker rm` plus a fresh `docker run` on the same volume |
-| `docker restart` | PASS - back to `healthy`, 3389 listening, RDP reconnects to the session |
-| Secret scan (repo, image history, image env) | PASS - no `ghp_`, token or password values found |
+| RDP client says the certificate is untrusted | Expected: xrdp generates a self-signed certificate. Accept it or pass `/cert:ignore` to `xfreerdp`. |
+| Login window appears and immediately disconnects | Wrong password, or the volume's `/home/ubuntu` is not writable: `docker logs ubuntu-xrdp`. |
+| Black screen after login | Delete the session: `docker exec ubuntu-xrdp rm -f /home/ubuntu/.xsession-errors` then reconnect; if it repeats, `docker restart ubuntu-xrdp`. |
+| `xrdp: already running` after a restart | The entrypoint removes the stale pid files; if you replaced `start.sh`, keep `rm -f /var/run/xrdp/*.pid`. |
+| No sound | Audio redirection is best-effort; check `/var/log/pulseaudio.log` inside the container. |
+| Want a fresh desktop | `docker rm -f ubuntu-xrdp && docker volume rm ubuntu-xrdp-home` then run again. |
 
-Not verified: a live request to a model provider - that needs your own API key (`hermes setup`).
-`hermes doctor` also reports npm advisories inside the upstream Hermes workspaces; those belong
-to the upstream install, not to this image.
+## Verified
 
-## Hermes Desktop (GUI)
+Measured on a GitHub Codespace of this repository (`standardLinux32gb`: 4 vCPU, 16 GB RAM, root
+through passwordless sudo), Docker 29.7.2, after `docker system prune -af` so the build started from
+an empty image store. The RDP checks were done by driving a real `xfreerdp` client against the
+container and typing the credentials into the login window.
 
-Bundles the Electron **Hermes Desktop** app (fork: `jjkh1673-tech/hermes-desktop`, upstream
-`sir1st/hermes-desktop`): launcher on the desktop, icon in the Plank dock, and the black-and-white
-Hermes artwork as its application icon. The CLI agent stays available as `hermes` / `ai`.
-Both editions share the same dock, clock widget and icon styling; the wallpaper is the only thing
-that differs - this XFCE edition keeps the classic dark Ubuntu wallpaper, and the MATE edition
-(ubuntu-mate-xrdp) uses the blue anime wallpaper.
+<!--VERIFY-->
+
+## Notes
+
+- The image is MIT-licensed like the desktop it installs; Hermes Agent is upstream (Nous Research)
+  and is fetched by its own installer at build time, so the agent you get is the one upstream ships.
+- No API key, token or password other than the documented default is stored in the image.
+- Firefox and Chrome are snap packages on Ubuntu and snapd cannot run inside this container, so a
+  browser is not preinstalled; `xdg-open` and the Hermes browsing tools still work with any browser
+  you install from a `.deb`.
