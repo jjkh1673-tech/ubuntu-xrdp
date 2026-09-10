@@ -205,7 +205,7 @@ RUN mkdir -p /home/ubuntu/Desktop && \
     chown ubuntu:ubuntu /home/ubuntu/.bashrc
 
 # The image reference the System Upgrade tool prints in its migration plan.
-RUN printf '%s\n' 'ubuntu-xrdp:26.04' > /etc/ubuntu-image-ref
+RUN printf '%s\n' 'ghcr.io/jjkh1673-tech/ubuntu-xrdp:latest' > /etc/ubuntu-image-ref
 
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
