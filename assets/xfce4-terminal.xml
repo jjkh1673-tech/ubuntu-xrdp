@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<channel name="xfce4-terminal" version="1.0">
+  <property name="misc" type="empty">
+    <property name="theme-variant" type="string" value="dark"/>
+    <property name="language-type" type="string" value="en_US"/>
+  </property>
+  <property name="profiles" type="empty">
+    <property name="Default" type="empty">
+      <property name="color-palette" type="array">
+        <value type="string" value="#4A4A55"/>
+        <value type="string" value="#E06C75"/>
+        <value type="string" value="#98C379"/>
+        <value type="string" value="#E5C07B"/>
+        <value type="string" value="#61AFEF"/>
+        <value type="string" value="#C678DD"/>
+        <value type="string" value="#56B6C2"/>
+        <value type="string" value="#DCDFE4"/>
+        <value type="string" value="#5C6370"/>
+        <value type="string" value="#FF6B81"/>
+        <value type="string" value="#B5E48C"/>
+        <value type="string" value="#FFD479"/>
+        <value type="string" value="#7DB9FF"/>
+        <value type="string" value="#D89BF5"/>
+        <value type="string" value="#6FD3E0"/>
+        <value type="string" value="#F7F9FC"/>
+        </property>
+      <property name="color-mode" type="string" value="TERMINAL_COLORS_CUSTOM"/>
+      <property name="background-mode" type="string" value="TERMINAL_BACKGROUND_COLOR"/>
+      <property name="background-color" type="string" value="#10131A"/>
+      <property name="foreground-color" type="string" value="#E7E9EB"/>
+      <property name="cursor-color-foreground" type="string" value="#10131A"/>
+      <property name="cursor-color-background" type="string" value="#98C379"/>
+      <property name="font" type="string" value="Ubuntu Mono 13"/>
+      <property name="scrollback-lines" type="uint32" value="10000"/>
+      <property name="scrollback-unlimited" type="bool" value="false"/>
+      <property name="audible-bell" type="bool" value="false"/>
+      <property name="bold-is-bright" type="bool" value="true"/>
+      <property name="cursor-blink-mode" type="string" value="SYSTEM"/>
+      <property name="show-menubar" type="bool" value="false"/>
+      <property name="title" type="string" value="Ubuntu XRDP"/>
+    </property>
+  </property>
+</channel>
